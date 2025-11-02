@@ -19,12 +19,13 @@ const BeautyDeals = () => {
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {beautyProducts.map((product) => (
-            <Card key={product.id} onClick={() => router.push(`/productdetails/${product.id}`)} className="group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <Card key={product.id} className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <div className="relative aspect-square overflow-hidden bg-muted">
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer "
+                  onClick={() => router.push(`/productdetails/${product.id}`)} 
                 />
                 <Badge className="absolute top-2 right-2 bg-[#FF6E42] hover:bg-[#2DA2A4] text-white  text-xs">
                   Sale

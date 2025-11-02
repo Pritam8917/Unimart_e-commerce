@@ -25,7 +25,7 @@ const HomeDealsSection = () => {
           <Link href="/productspage/home">
             <Button
               variant="default"
-              className="bg-[#08A0AA] text-white hover:bg-[#20A9B2] py-5"
+              className="bg-[#08A0AA] text-white hover:bg-[#20A9B2] py-5 cursor-pointer"
             >
               Shop Now
             </Button>
@@ -36,13 +36,10 @@ const HomeDealsSection = () => {
           {homeDeals.map((deal) => (
             <Card
               key={deal.id}
-              className={`group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 ${
+              className={`group overflow-hidden  hover:shadow-lg transition-all duration-300 ${
                 deal.id === 101 ? "sm:col-span-2" : ""
               }`}
-              onClick={() =>{
-                  console.log("Navigating to:", `/productdetails/${deal.id}`);
-                  router.push(`/productdetails/${deal.id}`);
-              }}
+            
             >
               <div
                 className={`relative overflow-hidden ${
@@ -52,7 +49,10 @@ const HomeDealsSection = () => {
                 <img
                   src={deal.image}
                   alt={deal.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer"
+                    onClick={() => {
+                  router.push(`/productdetails/${deal.id}`);
+              }}
                 />
                 <Badge className="absolute top-2 right-2 bg-[#ED2020] text-white text-xs hover:bg-[#2DA2A4] transition-colors">
                   {deal.discount}

@@ -1,33 +1,48 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { MapPin, Search, ShoppingCart, User } from "lucide-react";
+import { MapPin, Search, ShoppingCart, User, Heart } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/app/CartContext/page";
+import { useWishlist } from "@/app/wishlistcontext/page";
+import { useSession } from "next-auth/react"; // ✅ added
+import Image from "next/image";
 
 const Navbar = () => {
-  const Router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
+  const { data: session, status } = useSession(); // ✅ get user session
   const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
+  const [searchQuery, setSearchQuery] = useState("");
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      Router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
-    }
+    router.push(`/searchpage?q=${encodeURIComponent(searchQuery)}`);
   };
 
+  const isLoggedIn = status === "authenticated"; // ✅ check login status
+
   return (
-    <nav className="sticky top-0 z-50 bg-background border-b border-border px-15">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-17 gap-4 text-md">
+    <nav className="sticky top-0 z-50 bg-background border-b border-border shadow-sm px-4 sm:px-6 md:px-10 lg:px-13">
+      <div className="container mx-auto">
+        <div className="flex items-center justify-between h-16 sm:h-18 gap-2 sm:gap-4 md:gap-6 lg:gap-8 text-sm sm:text-md">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 min-w-fit cursor-pointer">
-            <div className="w-9 h-9 bg-[#08A0AA] rounded-lg flex items-center justify-center">
-              <span className="text-xl font-bold text-primary-foreground">S</span>
+          <Link
+            href="/"
+            className="flex items-center gap-2 min-w-fit cursor-pointer"
+          >
+            <div className="w-40 h-10 flex items-center justify-center overflow-hidden">
+              <Image
+                src="/assets/logo.png"
+                alt="UniMart Logo"
+                width={160}
+                height={160}
+                className="object-contain"
+                priority
+              />
             </div>
-            <span className="text-xl font-bold text-foreground hidden sm:block">ShopHub</span>
           </Link>
 
           {/* Location */}
@@ -39,15 +54,18 @@ const Navbar = () => {
             </div>
           </button>
 
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="flex-1 max-w-2xl">
+          {/* Search */}
+          <form
+            onSubmit={handleSearch}
+            className="flex-1 max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-2xl"
+          >
             <div className="relative">
               <Input
                 type="text"
-                placeholder="Search for products..."
+                placeholder="Search for products, brands and more"
                 value={searchQuery}
-                onChange={(e:any) => setSearchQuery(e.target.value)}
-                className="w-full pr-10 border-input"
+                onChange={(e: any) => setSearchQuery(e.target.value)}
+                className="w-full pr-10 border-input text-sm sm:text-base"
               />
               <Button
                 type="submit"
@@ -60,30 +78,58 @@ const Navbar = () => {
             </div>
           </form>
 
-          {/* Right Side Actions */}
-          <div className="flex items-center gap-2 min-w-fit">
-            <Link href="/LoginPage">
-              <Button variant="ghost" size="sm" className="hidden md:flex p-4 hover:bg-[#FF6E42] hover:text-white transition-colors text-md justify-center items-center cursor-pointer">
-                {/* <User className="w-5 h-5 mr-2" /> */}
-                Login
+          {/* Right Side */}
+          <div className="flex items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 min-w-fit">
+            {/* Profile */}
+            <Link href="/profilepage" className="flex flex-col items-center">
+              <Button
+                variant="ghost"
+                size="icon"
+                className=" md:flex hover:bg-[#FF6E42] hover:text-white transition-colors cursor-pointer "
+              >
+                <User className="w-8 h-8 sm:w-10 sm:h-10" />
               </Button>
+              <span className="md:block text-xs  font-medium">Profile</span>
             </Link>
 
-            <Link href="/CartPage">
-              <Button variant="ghost" size="icon" className="relative hover:bg-[#FF6E42] hover:text-white transition-colors cursor-pointer">
-                <ShoppingCart className="w-5 h-5" />
-                  {cartCount > 0 && (
+            {/* Wishlist */}
+            <Link
+              href="/wishlistpage"
+              className="flex flex-col items-center relative"
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-[#FF6E42] hover:text-white transition-colors cursor-pointer "
+              >
+                <Heart className="w-8 h-8 sm:w-10 sm:h-10" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#FF6E42] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Button>
+              <span className="text-xs  font-medium ">Wishlist</span>
+            </Link>
+
+            {/* Cart */}
+            <Link
+              href="/cartpage"
+              className="flex flex-col items-center relative"
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-[#FF6E42] hover:text-white transition-colors cursor-pointer "
+              >
+                <ShoppingCart className="w-8 h-8 sm:w-10 sm:h-10" />
+                {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-[#FF6E42] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
                     {cartCount}
                   </span>
                 )}
               </Button>
-            </Link>
-
-            <Link href="/ProfilePage">
-              <Button variant="ghost" size="icon" className="hidden sm:flex hover:bg-[#FF6E42] hover:text-white transition-colors cursor-pointer">
-                <User className="w-5 h-5 " />
-              </Button>
+              <span className="text-xs  font-medium">Cart</span>
             </Link>
           </div>
         </div>

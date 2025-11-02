@@ -26,8 +26,8 @@ const DiscountBanner = () => {
               </div>
             </div>
             
-            <Link href="/ProductsPage/deals">
-              <Button size="lg" className="bg-background text-foreground hover:bg-background/90 border border-border">
+            <Link href="/productspage/deals">
+              <Button size="lg" className="bg-background text-foreground hover:bg-background/90 border border-border cursor-pointer">
                 Shop Now
               </Button>
             </Link>

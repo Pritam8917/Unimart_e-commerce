@@ -1,43 +1,96 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/app/components/ui/tabs";
+import { Tabs,TabsContent,TabsList,TabsTrigger} from "@/app/components/ui/tabs";
 import { toast } from "sonner";
+import axios from "axios";
 
 const LoginPage = () => {
+
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
+  const [ loginData, setLoginData ] = useState({ email: "", password: "" });
+  const [ signupData, setSignupData ] = useState({ username: "", email: "", password: "" });
 
-  const handleLogin = (e: React.FormEvent) => {
+ const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    formType: "login" | "signup"
+  ) => {
+    const { id, value } = e.target;
+    if (formType === "login") setLoginData({ ...loginData, [id]: value });
+    else setSignupData({ ...signupData, [id.replace("signup-", "")]: value });
+  };
+
+
+  // 🟢 Login with NextAuth
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => {
+
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: loginData.email,
+        password: loginData.password,
+      });
+
+      if (res?.error) {
+        console.log(res.error);
+      if (res.error === "Invalid password") {
+        toast.error("Incorrect password. Please try again.");
+      } else if (res.error === "user not found") {
+        toast.error("User not found. Please sign up first.");
+        setActiveTab("signup");
+      } else {
+        toast.error("Login failed. Please try again.");
+      }
+    } else {
       toast.success("Login successful!");
-      setIsLoading(false);
       router.push("/");
-    }, 1000);
+    }
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong!");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setTimeout(() => {
-      toast.success("Account created successfully!");
-      setIsLoading(false);
-      router.push("/");
-    }, 1000);
-  };
+// 🔵 Signup by calling our custom API route
+const handleSignup = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsLoading(true);
+
+  try {
+    const res = await axios.post("/api/register", {
+      username: signupData.username,
+      email: signupData.email,
+      password: signupData.password,
+    });
+
+    toast.success(res.data.message || "Account created successfully!");
+    setActiveTab("login"); 
+
+  } catch (err: any) {
+    const errorMessage = err.response?.data?.message || "Signup failed. Please try again.";
+
+    toast(errorMessage);
+    if (errorMessage === "User already exists") {
+      setActiveTab("login"); // Switch to Login tab if user exists
+    }
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,12 +101,17 @@ const LoginPage = () => {
           <Card className="p-8">
             <h1 className="text-3xl font-bold text-center mb-8">Welcome</h1>
 
-            <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8 ">
+            <Tabs
+              value={activeTab}
+              onValueChange={(val) => setActiveTab(val as "login" | "signup")}
+              className="w-full"
+            >
+              <TabsList className="grid w-full grid-cols-2 mb-8">
                 <TabsTrigger value="login">Login</TabsTrigger>
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>
               </TabsList>
 
+              {/* LOGIN TAB */}
               <TabsContent value="login">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
@@ -61,6 +119,8 @@ const LoginPage = () => {
                     <Input
                       id="email"
                       type="email"
+                      value={loginData.email}
+                      onChange={(e) => handleChange(e, "login")}
                       placeholder="your@email.com"
                       required
                     />
@@ -71,6 +131,8 @@ const LoginPage = () => {
                     <Input
                       id="password"
                       type="password"
+                      value={loginData.password}
+                      onChange={(e) => handleChange(e, "login")}
                       placeholder="••••••••"
                       required
                     />
@@ -94,14 +156,17 @@ const LoginPage = () => {
                 </form>
               </TabsContent>
 
+              {/* SIGNUP TAB */}
               <TabsContent value="signup">
                 <form onSubmit={handleSignup} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
+                    <Label htmlFor="username">Full Name</Label>
                     <Input
-                      id="name"
+                      id="username"
                       type="text"
-                      placeholder="John Doe"
+                      placeholder="Pritam Kumar"
+                      value={signupData.username}
+                      onChange={(e) => handleChange(e, "signup")}
                       required
                     />
                   </div>
@@ -112,6 +177,8 @@ const LoginPage = () => {
                       id="signup-email"
                       type="email"
                       placeholder="your@email.com"
+                      value={signupData.email}
+                      onChange={(e) => handleChange(e, "signup")}
                       required
                     />
                   </div>
@@ -122,6 +189,8 @@ const LoginPage = () => {
                       id="signup-password"
                       type="password"
                       placeholder="••••••••"
+                      value={signupData.password}
+                      onChange={(e) => handleChange(e, "signup")}
                       required
                     />
                   </div>

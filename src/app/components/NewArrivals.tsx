@@ -9,7 +9,7 @@ const newArrivals = allProducts.filter((p) => p.id >= 1 && p.id <= 12);
 const NewArrivals = () => {
   const router = useRouter();
   return (
-    <section className="py-16 bg-muted/30 px-15">
+    <section className="py-16 bg-muted/30 px-15" id="new-arrival">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -27,7 +27,7 @@ const NewArrivals = () => {
           {newArrivals.map((product) => (
             <Card
               key={product.id}
-              className={`group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 ${
+              className={`group overflow-hidden  hover:shadow-lg transition-all duration-300 ${
                 product.id === 1 ? "md:row-span-2" : ""
               }`}
               onClick={() => router.push(`/productdetails/${product.id}`)}
@@ -36,7 +36,7 @@ const NewArrivals = () => {
                 <img
                   src={product.image}
                   alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer"
                 />
                 <Badge className="absolute top-2 left-2 bg-[#FF6E42] text-white text-xs hover:bg-[#2DA2A4] transition-colors">
                   {product.badge}

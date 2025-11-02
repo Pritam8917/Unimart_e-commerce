@@ -27,7 +27,7 @@ const GadgetsSection = () => {
           <Link href="/productspage/gadgets">
             <Button
               variant="default"
-              className="bg-[#08A0AA] text-white hover:bg-[#20A9B2]"
+              className="bg-[#08A0AA] text-white hover:bg-[#20A9B2] cursor-pointer"
             >
               Explore All
             </Button>
@@ -38,10 +38,10 @@ const GadgetsSection = () => {
           {gadgets.map((gadget) => (
             <Card
               key={gadget.id}
-              className={`group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 hover:-translate-y-1 ${
+              className={`group overflow-hidden  hover:shadow-lg transition-all duration-300 hover:-translate-y-1 ${
                 gadget.id === 2 ? "md:col-span-2" : ""
               }`}
-              onClick={() => router.push(`/productdetails/${gadget.id}`)}
+            
             >
               <div
                 className={`relative overflow-hidden ${
@@ -51,9 +51,10 @@ const GadgetsSection = () => {
                 <img
                   src={gadget.image}
                   alt={gadget.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer"
+                   onClick={() => router.push(`/productdetails/${gadget.id}`)}
                 />
-                <Badge className="absolute top-2 left-2 hover:bg-[#20A9B2] text-black bg-white hover:text-white text-xs">
+                <Badge className="absolute top-2 left-2 bg-[#20A9B2]  text-white text-xs">
                   {gadget.badge}
                 </Badge>
               </div>
@@ -71,7 +72,8 @@ const GadgetsSection = () => {
                 </div>
                 <Button
                   size="sm"
-                  className="w-full bg-[#08A0AA] text-white hover:bg-[#20A9B2]"
+                  className="w-full bg-[#08A0AA] text-white hover:bg-[#20A9B2] cursor-pointer"
+                  onClick={() => router.push(`/productdetails/${gadget.id}`)}
                 >
                   Buy Now
                 </Button>

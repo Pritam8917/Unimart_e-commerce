@@ -18,7 +18,7 @@ const Hero = () => {
       description: "Discover the latest trends with up to 50% off on selected items",
       image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&auto=format&fit=crop",
       primaryBtn: "Shop Now",
-      primaryLink: "/ProductsPage/featured",
+      primaryLink: "/productspage/featured",
     },
     {
       id: 2,
@@ -26,7 +26,7 @@ const Hero = () => {
       description: "Amazing deals on smartphones, tablets, and accessories",
       image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1920&auto=format&fit=crop",
       primaryBtn: "Explore Deals",
-      primaryLink: "/ProductsPage/gadgets",
+      primaryLink: "/productspage/gadgets",
     },
     {
       id: 3,
@@ -34,7 +34,7 @@ const Hero = () => {
       description: "Beautiful furniture and decor for every space",
       image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=1920&auto=format&fit=crop",
       primaryBtn: "Shop Home",
-      primaryLink: "/ProductsPage/home",
+      primaryLink: "/productspage/home",
     },
   ];
 
@@ -47,7 +47,7 @@ const Hero = () => {
         }}
         plugins={[
           Autoplay({
-            delay: 3000,
+            delay: 4000,
           }),
         ]}
         className="w-full"
@@ -74,7 +74,7 @@ const Hero = () => {
                     </p>
                     
                     <Link href={slide.primaryLink}>
-                      <Button size="lg" className="bg-[#08A0AA] text-white hover:bg-[#06A0AA]/90 text-base px-8">
+                      <Button size="lg" className="bg-[#08A0AA] text-white hover:bg-[#06A0AA]/90 text-base px-8 cursor-pointer ">
                         {slide.primaryBtn}
                       </Button>
                     </Link>

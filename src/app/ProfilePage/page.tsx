@@ -1,3 +1,4 @@
+"use client";
 import Navbar from "@/app/components/Navbar";
 import CategoryNav from "@/app/components/CategoryNav";
 import Footer from "@/app/components/Footer";
@@ -11,9 +12,15 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/app/components/ui/tabs";
-import { User, Package, MapPin, CreditCard } from "lucide-react";
+import { User, Package, MapPin, CreditCard, LogOut } from "lucide-react";
+import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";   
 
 const ProfilePage = () => {
+  const { data: session } = useSession();
+  const user = session?.user;
+
+
   const orders = [
     {
       id: "ORD-001",
@@ -37,23 +44,45 @@ const ProfilePage = () => {
       <CategoryNav />
 
       <div className="container mx-auto px-18 py-8">
-        <h1 className="text-4xl font-bold mb-8">My Account</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold">My Account</h1>
+          <Button
+            variant="outline"
+             onClick={() => signOut({ callbackUrl: "/" })}
+            className="flex items-center gap-2  text-white bg-[#20A9B2] hover:bg-[#08A0AA] hover:text-white cursor-pointer"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </Button>
+        </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="profile" className="flex items-center gap-2">
+            <TabsTrigger
+              value="profile"
+              className="flex items-center gap-2 cursor-pointer"
+            >
               <User className="h-4 w-4" />
               Profile
             </TabsTrigger>
-            <TabsTrigger value="orders" className="flex items-center gap-2">
+            <TabsTrigger
+              value="orders"
+              className="flex items-center gap-2 cursor-pointer"
+            >
               <Package className="h-4 w-4" />
               Orders
             </TabsTrigger>
-            <TabsTrigger value="addresses" className="flex items-center gap-2">
+            <TabsTrigger
+              value="addresses"
+              className="flex items-center gap-2 cursor-pointer"
+            >
               <MapPin className="h-4 w-4" />
               Addresses
             </TabsTrigger>
-            <TabsTrigger value="payment" className="flex items-center gap-2">
+            <TabsTrigger
+              value="payment"
+              className="flex items-center gap-2 cursor-pointer"
+            >
               <CreditCard className="h-4 w-4" />
               Payment
             </TabsTrigger>
@@ -66,11 +95,11 @@ const ProfilePage = () => {
                 <div className="grid md:grid-cols-2 gap-5">
                   <div className=" space-y-1.5">
                     <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" defaultValue="John" />
+                    <Input id="firstName"  />
                   </div>
                   <div className=" space-y-1.5">
                     <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" defaultValue="Doe" />
+                    <Input id="lastName"  />
                   </div>
                 </div>
 
@@ -79,7 +108,9 @@ const ProfilePage = () => {
                   <Input
                     id="email"
                     type="email"
-                    defaultValue="john.doe@example.com"
+                    defaultValue={user?.email ?? ""}
+                    disabled
+                    className="cursor-disabled bg-muted/50"
                   />
                 </div>
 
@@ -88,7 +119,7 @@ const ProfilePage = () => {
                   <Input id="phone" type="tel" defaultValue="+1 234 567 8900" />
                 </div>
 
-                <Button className="bg-[#08A0AA] text-white hover:bg-[#20A9B2]">
+                <Button className="bg-[#08A0AA] text-white hover:bg-[#20A9B2] cursor-pointer">
                   Save Changes
                 </Button>
               </form>
@@ -119,7 +150,7 @@ const ProfilePage = () => {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="mt-2 hover:text-white hover:bg-[#FF6E42]"
+                          className="mt-2 hover:text-white hover:bg-[#FF6E42] cursor-pointer"
                         >
                           View Details
                         </Button>
@@ -151,14 +182,14 @@ const ProfilePage = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="hover:text-white hover:bg-[#FF6E42]"
+                        className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
                       >
                         Edit
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
-                        className="hover:text-white hover:bg-[#FF6E42]"
+                        className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
                       >
                         Delete
                       </Button>
@@ -167,7 +198,7 @@ const ProfilePage = () => {
                 </Card>
                 <Button
                   variant="outline"
-                  className="hover:text-white hover:bg-[#FF6E42]"
+                  className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
                 >
                   + Add New Address
                 </Button>
@@ -191,14 +222,14 @@ const ProfilePage = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="hover:text-white hover:bg-[#FF6E42]"
+                        className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
                       >
                         Edit
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
-                        className="hover:text-white hover:bg-[#FF6E42]"
+                        className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
                       >
                         Delete
                       </Button>
@@ -207,7 +238,7 @@ const ProfilePage = () => {
                 </Card>
                 <Button
                   variant="outline"
-                  className="hover:text-white hover:bg-[#FF6E42]"
+                  className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
                 >
                   + Add New Card
                 </Button>

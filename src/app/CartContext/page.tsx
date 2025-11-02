@@ -1,5 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
 interface CartItem {
   id: number;
@@ -14,52 +15,39 @@ interface CartContextType {
   addToCart: (item: Omit<CartItem, "quantity">) => void;
   removeFromCart: (id: number) => void;
   updateQuantity: (id: number, delta: number) => void;
-  cartCount: number;
   clearCart: () => void;
+  cartCount: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("cart");
-      return saved ? JSON.parse(saved) : [];
-    }
-    return [];
-  });
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
+  // Load from DB on mount
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  const addToCart = (item: Omit<CartItem, "quantity">) => {
-    setCartItems((items) => {
-      const existing = items.find((i) => i.id === item.id);
-      if (existing) {
-        return items.map((i) =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
-        );
-      }
-      return [...items, { ...item, quantity: 1 }];
+    axios.get("/api/cart").then((res) => {
+      setCartItems(res.data.items || []);
     });
+  }, []);
+
+  const addToCart = async (item: Omit<CartItem, "quantity">) => {
+    const res = await axios.post("/api/cart", item);
+    setCartItems(res.data.items);
   };
 
-  const removeFromCart = (id: number) => {
-    setCartItems((items) => items.filter((item) => item.id !== id));
+  const removeFromCart = async (id: number) => {
+    const res = await axios.delete(`/api/cart/${id}`);
+    setCartItems(res.data.items);
   };
 
-  const updateQuantity = (id: number, delta: number) => {
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item
-      )
-    );
+  const updateQuantity = async (id: number, delta: number) => {
+    const res = await axios.put(`/api/cart/${id}`, { delta });
+    setCartItems(res.data.items);
   };
 
-  const clearCart = () => {
+  const clearCart = async () => {
+    await axios.delete("/api/cart/");
     setCartItems([]);
   };
 
@@ -72,8 +60,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addToCart,
         removeFromCart,
         updateQuantity,
-        cartCount,
         clearCart,
+        cartCount,
       }}
     >
       {children}
@@ -83,8 +71,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (!context) {
-    throw new Error("useCart must be used within CartProvider");
-  }
+  if (!context) throw new Error("useCart must be used within CartProvider");
   return context;
 };

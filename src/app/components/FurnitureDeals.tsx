@@ -25,7 +25,7 @@ const FurnitureDeals = () => {
             {" "}
             <Button
               variant="outline"
-              className="hover:bg-[#FF6E42] hover:text-white"
+              className="hover:bg-[#FF6E42] hover:text-white cursor-pointer"
             >
               See All Deals
             </Button>
@@ -71,9 +71,9 @@ const FurnitureDeals = () => {
                   </div>
                   <Button
                     size="sm"
-                    className="w-full bg-[#08A0AA] text-white hover:bg-[#20A9B2]"
+                    className="w-full bg-[#08A0AA] text-white hover:bg-[#20A9B2] cursor-pointer"
                   >
-                    Shop Now
+                    Buy Now
                   </Button>
                 </CardContent>
               </Card>

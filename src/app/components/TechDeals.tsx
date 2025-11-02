@@ -40,18 +40,19 @@ const TechDeals = () => {
             return (
               <Card
                 key={deal.id}
-                className={`group overflow-hidden hover:shadow-lg transition-all duration-300 ${
+                className={`group overflow-hidden hover:shadow-lg transition-all duration-300  ${
                   deal.id === 7 ? "sm:col-span-2 sm:row-span-2" : ""
                 }`}
-                onClick={() => router.push(`/productdetails/${deal.id}`)}
+               
               >
                 <div className="relative overflow-hidden">
                   <img
                     src={deal.image}
                     alt={deal.name}
-                    className={`w-full object-cover group-hover:scale-110 transition-transform duration-300 ${
+                    className={`w-full object-cover group-hover:scale-110 transition-transform duration-300 cursor-pointer ${
                       deal.id === 7 ? "h-full" : "h-40"
                     }`}
+                     onClick={() => router.push(`/productdetails/${deal.id}`)}
                   />
                   <Badge className="absolute top-2 right-2 bg-[#FF6E42] text-white text-xs hover:bg-[#2DA2A4] transition-colors">
                     {deal.discount}
@@ -75,7 +76,7 @@ const TechDeals = () => {
                     </span>
                     <span className=" line-through text-xs">{deal.originalPrice}</span>
                   </div>
-                  <Button  size="sm" className="bg-[#08A0AA] text-white hover:bg-[#20A9B2] w-full">
+                  <Button  size="sm" className="bg-[#08A0AA] text-white hover:bg-[#20A9B2] w-full cursor-pointer"  onClick={() => router.push(`/productdetails/${deal.id}`)}>
                     Shop Now
                   </Button>
                 </div>

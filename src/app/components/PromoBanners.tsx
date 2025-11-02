@@ -50,7 +50,7 @@ const PromoBanners = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Medium Banner 1 */}
-          <Link href="/ProductsPage/home" className="group">
+          <Link href="/productspage/home" className="group">
             <div className="relative h-[280px] rounded-2xl overflow-hidden bg-muted">
               <img
                 src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&auto=format&fit=crop"
