@@ -16,30 +16,55 @@ import {
 import { Separator } from "@/app/components/ui/separator";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import axios from "axios";
 
 const CheckoutPage = () => {
   const { cartItems, clearCart } = useCart();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
   const shipping = subtotal > 100 ? 0 : 50;
   const tax = subtotal * 0.1;
   const total = subtotal + shipping + tax;
 
-  const handlePlaceOrder = (e: React.FormEvent) => {
+  const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    try {
+      //Collect form data
+      const form = e.target as HTMLFormElement;
+      const shippingAddress = {
+        fullName: `${form.firstName.value} ${form.lastName.value}`,
+        address: form.address.value,
+        city: form.city.value,
+        state: form.state.value,
+        pincode: form.zip.value,
+        country: "India",
+        phone: form.phone.value,
+      };
+      const paymentMethod = "Card";
 
-    setTimeout(() => {
+      // POST request
+      const res = await axios.post("/api/orderitems", {
+        shippingAddress,
+        paymentMethod,
+      });
+      console.log("order placed successfully")
+      toast.success(res.data.message);
       clearCart();
+      router.push("/profilepage");
+    } catch (error: any) {
+      toast.error("Failed to place order , please try again");
+    } finally {
       setIsLoading(false);
-      toast.success(" Order placed successfully!");
-      router.push("/");
-      
-    }, 1500);
+    }
   };
+  const { data: session } = useSession();
+  const user = session?.user;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -76,7 +101,13 @@ const CheckoutPage = () => {
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div className="space-y-1.5">
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" required />
+                      <Input
+                        id="email"
+                        type="email"
+                        required
+                        defaultValue={user?.email ?? undefined}
+                        disabled
+                      />
                     </div>
                     <div className="space-y-1.5">
                       <Label htmlFor="phone">Phone Number</Label>
@@ -99,7 +130,7 @@ const CheckoutPage = () => {
                       <Input id="state" required />
                     </div>
                     <div className="space-y-1.5 pb-3">
-                      <Label htmlFor="zip">ZIP Code</Label>
+                      <Label htmlFor="zip">Pin Code</Label>
                       <Input id="zip" required />
                     </div>
                   </div>

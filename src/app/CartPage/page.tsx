@@ -31,7 +31,7 @@ const CartPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      {/* Optional: <CategoryNav /> if you want it visible here */}
+ <CategoryNav /> 
 
       <div className="container mx-auto px-6 md:px-12 lg:px-20 py-8">
         {/* 🛒 Empty Cart */}

@@ -1,4 +1,9 @@
 "use client";
+
+import React from "react";
+import { useState, useEffect } from "react";
+import { useSession, signOut } from "next-auth/react";
+import axios from "axios";
 import Navbar from "@/app/components/Navbar";
 import CategoryNav from "@/app/components/CategoryNav";
 import Footer from "@/app/components/Footer";
@@ -13,155 +18,202 @@ import {
   TabsTrigger,
 } from "@/app/components/ui/tabs";
 import { User, Package, MapPin, CreditCard, LogOut } from "lucide-react";
-import { signOut } from "next-auth/react";
-import { useSession } from "next-auth/react";   
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/app/components/ui/dialog";
 
 const ProfilePage = () => {
   const { data: session } = useSession();
   const user = session?.user;
 
+  // 1️⃣ Controlled form state
 
-  const orders = [
-    {
-      id: "ORD-001",
-      date: "2024-10-15",
-      status: "Delivered",
-      total: 599,
-      items: 2,
-    },
-    {
-      id: "ORD-002",
-      date: "2024-10-18",
-      status: "In Transit",
-      total: 299,
-      items: 1,
-    },
-  ];
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  // 2️⃣ Orders
+
+  const [orders, setOrders] = useState<any[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUserAndOrders = async () => {
+      try {
+        if (user) {
+          const [first, last] = (user?.name ?? "").split(" ");
+          let phoneFromOrder = "";
+          const res = await axios.get("/api/order");
+          const fetchedOrders = res.data.orders || [];
+          if (fetchedOrders.length > 0) {
+            phoneFromOrder = fetchedOrders[0].shippingAddress?.phone || "";
+          }
+          setOrders(fetchedOrders);
+          setFormData({
+            firstName: first || "",
+            lastName: last || "",
+            email: user.email || "",
+            phone: phoneFromOrder || "",
+          });
+        }
+      } catch (error: any) {
+        console.error("Error fetching orders:", error.message);
+      }
+    };
+
+    fetchUserAndOrders();
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <CategoryNav />
 
-      <div className="container mx-auto px-18 py-8">
+      <div className="container mx-auto px-15 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold">My Account</h1>
           <Button
             variant="outline"
-             onClick={() => signOut({ callbackUrl: "/" })}
-            className="flex items-center gap-2  text-white bg-[#20A9B2] hover:bg-[#08A0AA] hover:text-white cursor-pointer"
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="flex items-center gap-2 text-white bg-[#20A9B2] hover:bg-[#08A0AA] hover:text-white cursor-pointer"
           >
             <LogOut className="h-4 w-4" />
             Logout
           </Button>
         </div>
 
+        {/* TABS */}
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger
-              value="profile"
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <User className="h-4 w-4" />
-              Profile
+            <TabsTrigger value="profile" className="flex items-center gap-2 cursor-pointer">
+              <User className="h-4 w-4" /> Profile
             </TabsTrigger>
-            <TabsTrigger
-              value="orders"
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <Package className="h-4 w-4" />
-              Orders
+            <TabsTrigger value="orders" className="flex items-center gap-2 cursor-pointer">
+              <Package className="h-4 w-4" /> Orders
             </TabsTrigger>
-            <TabsTrigger
-              value="addresses"
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <MapPin className="h-4 w-4" />
-              Addresses
+            <TabsTrigger value="addresses" className="flex items-center gap-2 cursor-pointer">
+              <MapPin className="h-4 w-4" /> Addresses
             </TabsTrigger>
-            <TabsTrigger
-              value="payment"
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <CreditCard className="h-4 w-4" />
-              Payment
+            <TabsTrigger value="payment" className="flex items-center gap-2 cursor-pointer">
+              <CreditCard className="h-4 w-4" /> Payment
             </TabsTrigger>
           </TabsList>
 
+          {/* ---------- PROFILE ---------- */}
           <TabsContent value="profile">
-            <Card className="p-6">
-              <h2 className="text-2xl font-bold mb-6">Personal Information</h2>
-              <form className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-5">
-                  <div className=" space-y-1.5">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName"  />
+            {!user ? (
+              <Card className="p-6 text-center text-muted-foreground">
+                <p>Loading Profile......</p>
+              </Card>
+            ) : (
+              <Card className="p-6">
+                <h2 className="text-2xl font-bold mb-6">
+                  Personal Information
+                </h2>
+                <form className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-5">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="firstName">First Name</Label>
+                      <Input
+                        id="firstName"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="lastName">Last Name</Label>
+                      <Input
+                        id="lastName"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
-                  <div className=" space-y-1.5">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName"  />
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
                   </div>
-                </div>
 
-                <div className=" space-y-1.5">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    defaultValue={user?.email ?? ""}
-                    disabled
-                    className="cursor-disabled bg-muted/50"
-                  />
-                </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={handleChange}
+                    />
+                  </div>
 
-                <div className=" space-y-1.5">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input id="phone" type="tel" defaultValue="+1 234 567 8900" />
-                </div>
-
-                <Button className="bg-[#08A0AA] text-white hover:bg-[#20A9B2] cursor-pointer">
-                  Save Changes
-                </Button>
-              </form>
-            </Card>
+                  <Button className="bg-[#08A0AA] text-white hover:bg-[#20A9B2] cursor-pointer">
+                    Save Changes
+                  </Button>
+                </form>
+              </Card>
+            )}
           </TabsContent>
 
+          {/* ---------- ORDERS ---------- */}
           <TabsContent value="orders">
             <Card className="p-6">
               <h2 className="text-2xl font-bold mb-6">Order History</h2>
               <div className="space-y-4">
-                {orders.map((order) => (
-                  <Card key={order.id} className="p-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-semibold">Order {order.id}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {order.date}
-                        </p>
-                        <p className="text-sm mt-2">{order.items} items</p>
+                {orders.length === 0 ? (
+                  <p className="text-muted-foreground">No orders found.</p>
+                ) : (
+                  orders.map((order) => (
+                    <Card key={order._id || order.id} className="p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold">Order {order.id}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {order.date}
+                          </p>
+                          <p className="text-sm mt-2">
+                            {order.items?.length || 0}{" "}
+                            {order.items?.length === 1 ? "item" : "items"}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-[#08A0AA]">
+                            ₹{order.total}
+                          </p>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {order.status}
+                          </p>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="mt-2 hover:text-white hover:bg-[#FF6E42] cursor-pointer"
+                            onClick={() => setSelectedOrder(order)}
+                          >
+                            View Details
+                          </Button>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold text-[#08A0AA]">
-                          ${order.total}
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {order.status}
-                        </p>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="mt-2 hover:text-white hover:bg-[#FF6E42] cursor-pointer"
-                        >
-                          View Details
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
+                    </Card>
+                  ))
+                )}
               </div>
             </Card>
           </TabsContent>
 
+          {/* ---------- ADDRESSES ---------- */}
           <TabsContent value="addresses">
             <Card className="p-6">
               <h2 className="text-2xl font-bold mb-6">Saved Addresses</h2>
@@ -171,11 +223,11 @@ const ProfilePage = () => {
                     <div>
                       <p className="font-semibold">Home</p>
                       <p className="text-sm text-muted-foreground mt-2">
-                        123 Main St
+                        Atri Hall of Residence
                         <br />
-                        New York, NY 10001
+                        Kirba
                         <br />
-                        United States
+                        Sambalpur, Odisha
                       </p>
                     </div>
                     <div className="space-x-2">
@@ -206,6 +258,7 @@ const ProfilePage = () => {
             </Card>
           </TabsContent>
 
+          {/* ---------- PAYMENT ---------- */}
           <TabsContent value="payment">
             <Card className="p-6">
               <h2 className="text-2xl font-bold mb-6">Payment Methods</h2>
@@ -247,6 +300,73 @@ const ProfilePage = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* ---------- ORDER DETAILS DIALOG ---------- */}
+      <Dialog
+        open={!!selectedOrder}
+        onOpenChange={() => setSelectedOrder(null)}
+      >
+        <DialogContent className="max-w-5xl p-6">
+          <DialogHeader>
+            <DialogTitle>
+              Order Details - {selectedOrder?.id || selectedOrder?._id}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedOrder && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Order Date</p>
+                  <p className="font-medium">{selectedOrder.date}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Status</p>
+                  <p className="font-medium">{selectedOrder.status}</p>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-3">Products</h3>
+                <div className="space-y-2">
+                  {selectedOrder.items?.map((product: any, index: number) => (
+                    <div
+                      key={`${product.name}-${index}`}
+                      className="flex justify-between items-center p-3 bg-muted rounded-lg"
+                    >
+                      <div>
+                        <p className="font-medium">{product.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Quantity: {product.quantity}
+                        </p>
+                      </div>
+                      <p className="font-semibold">₹{product.price}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Shipping Address</h3>
+                <p className="text-muted-foreground">
+                  {selectedOrder.shippingAddress?.address},{" "}
+                  {selectedOrder.shippingAddress?.city},{" "}
+                  {selectedOrder.shippingAddress?.state}
+                </p>
+              </div>
+
+              <div className="pt-4 border-t">
+                <div className="flex justify-between items-center">
+                  <p className="font-semibold text-lg">Total</p>
+                  <p className="font-bold text-2xl text-[#08A0AA]">
+                    ₹{selectedOrder.total}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>

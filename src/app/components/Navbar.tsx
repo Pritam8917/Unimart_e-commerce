@@ -50,7 +50,7 @@ const Navbar = () => {
             <MapPin className="w-4 h-4" />
             <div className="text-left">
               <p className="text-md">Deliver to</p>
-              <p className="font-semibold text-foreground">New York 10001</p>
+              <p className="font-semibold text-foreground">Kirba, Sambalpur, 768061</p>
             </div>
           </button>
 

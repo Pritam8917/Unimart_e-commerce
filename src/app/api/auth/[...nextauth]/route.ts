@@ -9,7 +9,11 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "text", placeholder: "jsmith@example.com" },
+        email: {
+          label: "Email",
+          type: "text",
+          placeholder: "jsmith@example.com",
+        },
         password: { label: "Password", type: "password" },
       },
 
@@ -28,7 +32,10 @@ export const authOptions: NextAuthOptions = {
           }
 
           //  Validate password
-          const isValid = await bcrypt.compare(credentials.password, user.password);
+          const isValid = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
           if (!isValid) {
             throw new Error("Invalid password");
           }
@@ -38,8 +45,9 @@ export const authOptions: NextAuthOptions = {
             id: user._id.toString(),
             username: user.username,
             email: user.email,
+            phone: user.phone,
+            name: user.username,
           };
-
         } catch (err: any) {
           console.error("❌ Authorization error:", err);
           throw new Error(err.message || "Authorization failed");
@@ -48,23 +56,33 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
 
-  callbacks: {
-    //  Attach user.id to JWT
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.email = user?.email;
-      }
-      return token;
-    },
+callbacks: {
+  async jwt({ token, user }) {
+    // when user first logs in (authorize() returns user)
+    if (user) {
+      token.id = user.id;
+      token.email = user.email;
+      token.name = (user as any).name || (user as any).username || "";
+    }
 
-    //  Attach id to session
-    async session({ session, token }) {
-      if (session.user) (session.user as any).id = token.id;
-      if (session.user) (session.user as any).email = token.email;
-      return session;
-    },
+    // Optional: Log it to confirm
+    console.log("🧩 JWT callback token:", token);
+    return token;
   },
+
+  async session({ session, token }) {
+    if (session.user) {
+      (session.user as any).id = token.id;
+      (session.user as any).email = token.email;
+      (session.user as any).name = token.name;
+    }
+
+    console.log("✅ Session callback session:", session);
+    return session;
+  },
+},
+
+
 
   //  Custom pages (update path to your actual login page)
   pages: {
