@@ -84,7 +84,7 @@ const ProfilePage = () => {
           <h1 className="text-4xl font-bold">My Account</h1>
           <Button
             variant="outline"
-            onClick={() => signOut({ callbackUrl: "/" })}
+            onClick={() => signOut({ callbackUrl: "/auth/LoginPage" })}
             className="flex items-center gap-2 text-white bg-[#20A9B2] hover:bg-[#08A0AA] hover:text-white cursor-pointer"
           >
             <LogOut className="h-4 w-4" />

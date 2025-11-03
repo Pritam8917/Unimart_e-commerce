@@ -18,7 +18,7 @@ const Footer = () => {
               <div className="w-9 h-9 bg-[#08A0AA] rounded-lg flex items-center justify-center">
                 <ShoppingCart className="w-6 h-6 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold text-foreground">UniMart</span>
+              <span className="text-xl font-bold text-foreground">Unimart</span>
             </div>
             <p className="text-sm mb-4">
               Your one-stop shop for quality products at amazing prices. Fast
@@ -176,7 +176,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-border pt-7 mt-10 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} UniMart. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Unimart. All rights reserved.</p>
         </div>
       </div>
     </footer>

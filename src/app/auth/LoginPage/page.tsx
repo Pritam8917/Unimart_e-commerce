@@ -8,19 +8,27 @@ import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
-import { Tabs,TabsContent,TabsList,TabsTrigger} from "@/app/components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/app/components/ui/tabs";
 import { toast } from "sonner";
 import axios from "axios";
 
 const LoginPage = () => {
-
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
-  const [ loginData, setLoginData ] = useState({ email: "", password: "" });
-  const [ signupData, setSignupData ] = useState({ username: "", email: "", password: "" });
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
+  const [signupData, setSignupData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
 
- const handleChange = (
+  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     formType: "login" | "signup"
   ) => {
@@ -29,8 +37,7 @@ const LoginPage = () => {
     else setSignupData({ ...signupData, [id.replace("signup-", "")]: value });
   };
 
-
-  // 🟢 Login with NextAuth
+  // 🔐 Login (Credentials)
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -43,19 +50,25 @@ const LoginPage = () => {
       });
 
       if (res?.error) {
-        console.log(res.error);
-      if (res.error === "Invalid password") {
-        toast.error("Incorrect password. Please try again.");
-      } else if (res.error === "user not found") {
-        toast.error("User not found. Please sign up first.");
-        setActiveTab("signup");
+        if (res.error === "Invalid password") {
+          toast.error("Incorrect password. Please try again.");
+        } else if (res.error === "user not found") {
+          toast.error("User not found. Please sign up first.");
+          setActiveTab("signup");
+        } else if (
+          res.error ===
+          "This email is registered with Google. Please sign in using Google"
+        ) {
+          toast.error(
+            "This email is registered with Google. Please sign in using Google"
+          );
+        } else {
+          toast.error("Login failed. Please try again.");
+        }
       } else {
-        toast.error("Login failed. Please try again.");
+        toast.success("Login successful!");
+        router.push("/");
       }
-    } else {
-      toast.success("Login successful!");
-      router.push("/");
-    }
     } catch (err) {
       console.error(err);
       toast.error("Something went wrong!");
@@ -64,33 +77,28 @@ const LoginPage = () => {
     }
   };
 
-// 🔵 Signup by calling our custom API route
-const handleSignup = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
+  // 🧾 Signup
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const res = await axios.post("/api/register", {
+        username: signupData.username,
+        email: signupData.email,
+        password: signupData.password,
+      });
 
-  try {
-    const res = await axios.post("/api/register", {
-      username: signupData.username,
-      email: signupData.email,
-      password: signupData.password,
-    });
-
-    toast.success(res.data.message || "Account created successfully!");
-    setActiveTab("login"); 
-
-  } catch (err: any) {
-    const errorMessage = err.response?.data?.message || "Signup failed. Please try again.";
-
-    toast(errorMessage);
-    if (errorMessage === "User already exists") {
-      setActiveTab("login"); // Switch to Login tab if user exists
+      toast.success(res.data.message || "Account created successfully!");
+      setActiveTab("login");
+    } catch (err: any) {
+      const errorMessage =
+        err.response?.data?.message || "Signup failed. Please try again.";
+      toast.error(errorMessage);
+      if (errorMessage === "User already exists") setActiveTab("login");
+    } finally {
+      setIsLoading(false);
     }
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -146,11 +154,30 @@ const handleSignup = async (e: React.FormEvent) => {
                     {isLoading ? "Logging in..." : "Login"}
                   </Button>
 
+                  <div className="flex items-center my-4">
+                    <div className="grow border-t border-gray-300"></div>
+                    <span className="mx-2 text-gray-500 text-sm">or</span>
+                    <div className="grow border-t border-gray-300"></div>
+                  </div>
+
+                  {/* Google Login */}
                   <Button
                     type="button"
-                    variant="link"
-                    className="w-full cursor-pointer"
+                    variant="outline"
+                    className="w-full mt-2 flex items-center justify-center gap-2 border-gray-300 hover:bg-gray-100 cursor-pointer"
+                    onClick={() =>
+                      signIn("google", { callbackUrl: "/profilepage" })
+                    }
                   >
+                    <img
+                      src="/assets/google.svg"
+                      alt="Google logo"
+                      className="w-5 h-5"
+                    />
+                    Continue with Google
+                  </Button>
+
+                  <Button type="button" variant="link" className="w-full">
                     Forgot password?
                   </Button>
                 </form>

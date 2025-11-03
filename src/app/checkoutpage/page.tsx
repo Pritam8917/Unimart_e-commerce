@@ -57,6 +57,7 @@ const CheckoutPage = () => {
       toast.success(res.data.message);
       clearCart();
       router.push("/profilepage");
+      
     } catch (error: any) {
       toast.error("Failed to place order , please try again");
     } finally {

@@ -16,7 +16,6 @@ export async function GET() {
     const orders = await Order.find({ userId: session.user.email }).sort({
       createdAt: -1,
     });
-    console.log(orders)
     return NextResponse.json({ orders }, { status: 200 });
   } catch (error) {
     console.error("Error fetching orders:", error);

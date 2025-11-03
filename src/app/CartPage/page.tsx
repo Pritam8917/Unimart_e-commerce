@@ -14,7 +14,6 @@ const CartPage = () => {
   const { cartItems, updateQuantity, removeFromCart } = useCart();
   const router = useRouter();
 
-
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -29,11 +28,13 @@ const CartPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background">
+      {/* 🧭 Navbar + Category */}
       <Navbar />
- <CategoryNav /> 
+      <CategoryNav />
 
-      <div className="container mx-auto px-6 md:px-12 lg:px-20 py-8">
+      {/* 🛒 Main Content */}
+      <main className="grow container mx-auto px-6 md:px-12 lg:px-20 py-8">
         {/* 🛒 Empty Cart */}
         {cartItems.length === 0 ? (
           <Card className="p-12 text-center bg-white border-none shadow-none">
@@ -46,7 +47,7 @@ const CartPage = () => {
           </Card>
         ) : (
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* 🧾 Cart Items Section */}
+            {/* 🧾 Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               {cartItems.map((item) => (
                 <Card key={item.id} className="p-4">
@@ -64,7 +65,7 @@ const CartPage = () => {
                       </p>
 
                       <div className="flex items-center gap-4 mt-4">
-                        {/* ➕➖ Quantity Buttons */}
+                        {/* ➕➖ Quantity */}
                         <div className="flex items-center gap-2 border rounded-lg">
                           <Button
                             variant="ghost"
@@ -118,7 +119,9 @@ const CartPage = () => {
 
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span className="font-semibold ">{shipping == 0 ? "free" : "₹" + shipping}</span>
+                    <span className="font-semibold">
+                      {shipping === 0 ? "Free" : `₹${shipping}`}
+                    </span>
                   </div>
 
                   <div className="border-t pt-2 flex justify-between text-lg">
@@ -148,8 +151,9 @@ const CartPage = () => {
             </div>
           </div>
         )}
-      </div>
+      </main>
 
+      {/* 🧭 Footer */}
       <Footer />
     </div>
   );
