@@ -24,7 +24,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/app/components/ui/dialog";
+import { toast
 
+ } from "sonner";
 const ProfilePage = () => {
   const { data: session } = useSession();
   const user = session?.user;
@@ -46,7 +48,37 @@ const ProfilePage = () => {
 
   const [orders, setOrders] = useState<any[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
+  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<any>(null);
+  const [editingPayment, setEditingPayment] = useState<any>(null);
+  // save profile
+  const handleSaveProfile = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    toast.success("Profile updated successfully!");
+  };
 
+ // edit address
+  const handleAddAddress = () => {
+    setEditingAddress(null);
+    setIsAddressDialogOpen(true);
+  };
+  const handleEditAddress = (address: any) => {
+    setEditingAddress(address);
+    setIsAddressDialogOpen(true);
+  };
+
+  // edit payments
+   const handleAddPayment = () => {
+    setEditingPayment(null);
+    setIsPaymentDialogOpen(true);
+  };
+
+  const handleEditPayment = (payment: any) => {
+    setEditingPayment(payment);
+    setIsPaymentDialogOpen(true);
+  };
+  
   useEffect(() => {
     const fetchUserAndOrders = async () => {
       try {
@@ -172,9 +204,9 @@ const ProfilePage = () => {
                     />
                   </div>
 
-                  <Button className="bg-[#08A0AA] text-white hover:bg-[#20A9B2] cursor-pointer">
+                  {/* <Button className="bg-[#08A0AA] text-white hover:bg-[#20A9B2] cursor-pointer">
                     Save Changes
-                  </Button>
+                  </Button> */}
                 </form>
               </Card>
             )}
@@ -230,21 +262,22 @@ const ProfilePage = () => {
           {/* ---------- ADDRESSES ---------- */}
           <TabsContent value="addresses">
             <Card className="p-6">
-              <h2 className="text-2xl font-bold mb-6">Saved Addresses</h2>
+              <h2 className="text-2xl font-bold mb-6">Saved Address</h2>
               <div className="space-y-4">
-                {orders.map((order) => (
+                {/* Check if orders exist and show first one */}
+                {orders.length > 0 ? (
                   <Card className="p-4">
                     <div className="flex justify-between">
                       <div>
                         <p className="font-semibold">Home</p>
                         <p className="text-sm text-muted-foreground mt-2">
-                          {order.shippingAddress.address}
+                          {orders[0].shippingAddress.address}
                           <br />
-                          {order.shippingAddress.city},
-                          {order.shippingAddress.state}
+                          {orders[0].shippingAddress.city},{" "}
+                          {orders[0].shippingAddress.state}
                         </p>
                       </div>
-                      <div className="space-x-2">
+                      {/* <div className="space-x-2">
                         <Button
                           size="sm"
                           variant="outline"
@@ -259,16 +292,21 @@ const ProfilePage = () => {
                         >
                           Delete
                         </Button>
-                      </div>
+                      </div> */}
                     </div>
                   </Card>
-                ))}
-                <Button
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    No address found.
+                  </p>
+                )}
+
+                {/* <Button
                   variant="outline"
                   className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
                 >
                   + Add New Address
-                </Button>
+                </Button> */}
               </div>
             </Card>
           </TabsContent>
@@ -278,18 +316,18 @@ const ProfilePage = () => {
             <Card className="p-6">
               <h2 className="text-2xl font-bold mb-6">Payment Methods</h2>
               <div className="space-y-4">
-                {orders.map((order) => (
+                {orders.length> 0 ? (
                   <Card className="p-4">
                     <div className="flex justify-between items-center">
                       <div>
                         <p className="font-semibold">
-                          {order.shippingAddress.cardNumber}
+                          {orders[0].shippingAddress.cardNumber}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {order.shippingAddress.cardExpiryDate}
+                          {orders[0].shippingAddress.cardExpiryDate}
                         </p>
                       </div>
-                      <div className="space-x-2">
+                      {/* <div className="space-x-2">
                         <Button
                           size="sm"
                           variant="outline"
@@ -304,16 +342,20 @@ const ProfilePage = () => {
                         >
                           Delete
                         </Button>
-                      </div>
+                      </div> */}
                     </div>
                   </Card>
-                ))}
-                <Button
+                ):(
+                  <p className="text-sm text-muted-foreground">
+                    No saved payments found.
+                  </p>
+                )}
+                {/* <Button
                   variant="outline"
                   className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
                 >
                   + Add New Card
-                </Button>
+                </Button> */}
               </div>
             </Card>
           </TabsContent>
@@ -380,10 +422,8 @@ const ProfilePage = () => {
                     <span>Subtotal</span>
                     <span>
                       ₹
-                      {
-                        selectedOrder.total -
-                          (selectedOrder.taxAmount +
-                            selectedOrder.shippingCost)}
+                      {selectedOrder.total -
+                        (selectedOrder.taxAmount + selectedOrder.shippingCost)}
                     </span>
                   </div>
 
@@ -396,8 +436,8 @@ const ProfilePage = () => {
                     <span>Delivery Fee</span>
                     <span>
                       {selectedOrder.total -
-                          (selectedOrder.taxAmount +
-                            selectedOrder.shippingCost)>100
+                        (selectedOrder.taxAmount + selectedOrder.shippingCost) >
+                      100
                         ? "Free"
                         : `₹${selectedOrder.shippingCost}`}
                     </span>
