@@ -16,6 +16,9 @@ interface ShippingAddress {
   pincode: string;
   country: string;
   phone: string;
+  cardName: string;
+  cardNumber: Number;
+ cardExpiryDate: string;
 }
 
 interface PaymentResult {
@@ -62,6 +65,9 @@ const OrderSchema = new Schema<Order>(
       pincode: { type: String, required: true },
       country: { type: String, required: true },
       phone: { type: String, required: true },
+      cardName: {type: String, required: true},
+      cardNumber: {type: Number, required: true},
+      cardExpiryDate : {type: String, required: true},
     },
 
     paymentMethod: { type: String, required: true },

@@ -95,16 +95,28 @@ const ProfilePage = () => {
         {/* TABS */}
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="profile" className="flex items-center gap-2 cursor-pointer">
+            <TabsTrigger
+              value="profile"
+              className="flex items-center gap-2 cursor-pointer"
+            >
               <User className="h-4 w-4" /> Profile
             </TabsTrigger>
-            <TabsTrigger value="orders" className="flex items-center gap-2 cursor-pointer">
+            <TabsTrigger
+              value="orders"
+              className="flex items-center gap-2 cursor-pointer"
+            >
               <Package className="h-4 w-4" /> Orders
             </TabsTrigger>
-            <TabsTrigger value="addresses" className="flex items-center gap-2 cursor-pointer">
+            <TabsTrigger
+              value="addresses"
+              className="flex items-center gap-2 cursor-pointer"
+            >
               <MapPin className="h-4 w-4" /> Addresses
             </TabsTrigger>
-            <TabsTrigger value="payment" className="flex items-center gap-2 cursor-pointer">
+            <TabsTrigger
+              value="payment"
+              className="flex items-center gap-2 cursor-pointer"
+            >
               <CreditCard className="h-4 w-4" /> Payment
             </TabsTrigger>
           </TabsList>
@@ -180,7 +192,9 @@ const ProfilePage = () => {
                     <Card key={order._id || order.id} className="p-4">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="font-semibold">Order {order.id}</p>
+                          <p className="font-semibold">
+                            Order {order.productId}
+                          </p>
                           <p className="text-sm text-muted-foreground">
                             {order.date}
                           </p>
@@ -218,36 +232,37 @@ const ProfilePage = () => {
             <Card className="p-6">
               <h2 className="text-2xl font-bold mb-6">Saved Addresses</h2>
               <div className="space-y-4">
-                <Card className="p-4">
-                  <div className="flex justify-between">
-                    <div>
-                      <p className="font-semibold">Home</p>
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Atri Hall of Residence
-                        <br />
-                        Kirba
-                        <br />
-                        Sambalpur, Odisha
-                      </p>
+                {orders.map((order) => (
+                  <Card className="p-4">
+                    <div className="flex justify-between">
+                      <div>
+                        <p className="font-semibold">Home</p>
+                        <p className="text-sm text-muted-foreground mt-2">
+                          {order.shippingAddress.address}
+                          <br />
+                          {order.shippingAddress.city},
+                          {order.shippingAddress.state}
+                        </p>
+                      </div>
+                      <div className="space-x-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </div>
-                    <div className="space-x-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
+                  </Card>
+                ))}
                 <Button
                   variant="outline"
                   className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
@@ -263,32 +278,36 @@ const ProfilePage = () => {
             <Card className="p-6">
               <h2 className="text-2xl font-bold mb-6">Payment Methods</h2>
               <div className="space-y-4">
-                <Card className="p-4">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="font-semibold">•••• •••• •••• 4242</p>
-                      <p className="text-sm text-muted-foreground">
-                        Expires 12/25
-                      </p>
+                {orders.map((order) => (
+                  <Card className="p-4">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-semibold">
+                          {order.shippingAddress.cardNumber}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {order.shippingAddress.cardExpiryDate}
+                        </p>
+                      </div>
+                      <div className="space-x-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
+                        >
+                          Delete
+                        </Button>
+                      </div>
                     </div>
-                    <div className="space-x-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
+                  </Card>
+                ))}
                 <Button
                   variant="outline"
                   className="hover:text-white hover:bg-[#FF6E42] cursor-pointer"
@@ -355,12 +374,41 @@ const ProfilePage = () => {
                 </p>
               </div>
 
-              <div className="pt-4 border-t">
-                <div className="flex justify-between items-center">
-                  <p className="font-semibold text-lg">Total</p>
-                  <p className="font-bold text-2xl text-[#08A0AA]">
-                    ₹{selectedOrder.total}
-                  </p>
+              <div className="pt-4 border-t mt-4">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Subtotal</span>
+                    <span>
+                      ₹
+                      {
+                        selectedOrder.total -
+                          (selectedOrder.taxAmount +
+                            selectedOrder.shippingCost)}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>GST</span>
+                    <span>₹{selectedOrder.taxAmount}</span>
+                  </div>
+
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Delivery Fee</span>
+                    <span>
+                      {selectedOrder.total -
+                          (selectedOrder.taxAmount +
+                            selectedOrder.shippingCost)>100
+                        ? "Free"
+                        : `₹${selectedOrder.shippingCost}`}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center pt-3 border-t mt-3">
+                    <span className="font-semibold text-lg">Total</span>
+                    <span className="font-bold text-2xl text-[#08A0AA]">
+                      ₹{selectedOrder.total}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>

@@ -14,6 +14,15 @@ import {
   CardTitle,
 } from "@/app/components/ui/card";
 import { Separator } from "@/app/components/ui/separator";
+import { Calendar } from "@/app/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/app/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -22,6 +31,7 @@ import axios from "axios";
 const CheckoutPage = () => {
   const { cartItems, clearCart } = useCart();
   const [isLoading, setIsLoading] = useState(false);
+  const [expiryDate, setExpiryDate] = useState<Date>();
   const router = useRouter();
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -30,7 +40,8 @@ const CheckoutPage = () => {
   const shipping = subtotal > 100 ? 0 : 50;
   const tax = subtotal * 0.1;
   const total = subtotal + shipping + tax;
-
+  const { data: session } = useSession();
+  const user = session?.user;
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -42,9 +53,12 @@ const CheckoutPage = () => {
         address: form.address.value,
         city: form.city.value,
         state: form.state.value,
-        pincode: form.zip.value,
+        pincode: form.pin.value,
         country: "India",
         phone: form.phone.value,
+        cardName: form.cardname.value,
+        cardNumber: form.cardnumber.value,
+        cardExpiryDate: expiryDate ? format(expiryDate, "MM/yy") : "",
       };
       const paymentMethod = "Card";
 
@@ -53,19 +67,17 @@ const CheckoutPage = () => {
         shippingAddress,
         paymentMethod,
       });
-      console.log("order placed successfully")
+      console.log("order placed successfully");
       toast.success(res.data.message);
       clearCart();
       router.push("/profilepage");
-      
     } catch (error: any) {
       toast.error("Failed to place order , please try again");
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
   };
-  const { data: session } = useSession();
-  const user = session?.user;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -131,8 +143,8 @@ const CheckoutPage = () => {
                       <Input id="state" required />
                     </div>
                     <div className="space-y-1.5 pb-3">
-                      <Label htmlFor="zip">Pin Code</Label>
-                      <Input id="zip" required />
+                      <Label htmlFor="pin">Pin Code</Label>
+                      <Input id="pin" required />
                     </div>
                   </div>
                 </CardContent>
@@ -147,21 +159,48 @@ const CheckoutPage = () => {
                 </CardHeader>
                 <CardContent className="space-y-7">
                   <div className="space-y-1.5">
-                    <Label htmlFor="cardName">Name on Card</Label>
-                    <Input id="cardName" required />
+                    <Label htmlFor="cardname">Name on Card</Label>
+                    <Input id="cardname" required />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="cardNumber">Card Number</Label>
+                    <Label htmlFor="cardnumber">Card Number</Label>
                     <Input
-                      id="cardNumber"
+                      id="cardnumber"
                       placeholder="1234 5678 9012 3456"
                       required
                     />
                   </div>
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div className="space-y-1.5">
-                      <Label htmlFor="expiry">Expiry Date</Label>
-                      <Input id="expiry" placeholder="MM/YY" required />
+                      <Label htmlFor="cardexpirydate">Expiry Date</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !expiryDate && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {expiryDate ? (
+                              format(expiryDate, "MM/yy")
+                            ) : (
+                              <span>Pick expiry date</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={expiryDate}
+                            onSelect={setExpiryDate}
+                            disabled={(date) => date < new Date()}
+                            initialFocus
+                            className="pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </div>
                     <div className="space-y-1.5 pb-3">
                       <Label htmlFor="cvv">CVV</Label>

@@ -67,6 +67,8 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
+
+    //save login data in database through google provider
     async signIn({ user, account }) {
       await connect();
 
@@ -84,6 +86,7 @@ export const authOptions: NextAuthOptions = {
 
       return true;
     },
+    
     async jwt({ token, user }) {
       // when user first logs in (authorize() returns user)
       if (user) {
