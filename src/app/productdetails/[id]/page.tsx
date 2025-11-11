@@ -43,7 +43,7 @@ const ProductDetailPage = () => {
     const found = cartItems?.some((item: CartItem) => item.id === product.id);
     setIsInCart(found);
   }, [cartItems, product]);
-  
+
   // If product is not found
   if (!product) {
     return (
