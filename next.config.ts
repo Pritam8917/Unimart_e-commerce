@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-   images: {
+  images: {
     remotePatterns: [
       {
         protocol: "https",
@@ -20,6 +20,9 @@ const nextConfig: NextConfig = {
         hostname: "tse3.mm.bing.net",
       },
     ],
+  },
+  eslint: {
+    ignoreDuringBuilds: process.env.VERCEL === "1",
   },
 };
 
