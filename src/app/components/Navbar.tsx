@@ -5,8 +5,8 @@ import { MapPin, Search, ShoppingCart, User, Heart } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 import { useRouter } from "next/navigation";
-import { useCart } from "@/app/CartContext/page";
-import { useWishlist } from "@/app/wishlistcontext/page";
+import { useCart } from "@/contexts/CartContext/page";
+import { useWishlist } from "@/contexts/wishlistcontext/page";
 import Image from "next/image";
 
 const Navbar = () => {

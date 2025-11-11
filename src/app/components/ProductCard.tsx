@@ -2,10 +2,10 @@
 import { ShoppingCart, Heart } from "lucide-react";
 import { Button } from "@/app/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/app/components/ui/card";
-import { useCart } from "@/app/CartContext/page";
+import { useCart } from "@/contexts/CartContext/page";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useWishlist } from "@/app/wishlistcontext/page";
+import { useWishlist } from "@/contexts/wishlistcontext/page";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 

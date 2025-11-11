@@ -7,7 +7,7 @@ import Footer from "@/app/components/Footer";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import { useCart } from "@/app/CartContext/page";
+import { useCart } from "@/contexts/CartContext/page";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 

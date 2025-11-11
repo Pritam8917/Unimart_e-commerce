@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useCart } from "@/app/CartContext/page";
+import { useCart } from "@/contexts/CartContext/page";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { Button } from "@/app/components/ui/button";
