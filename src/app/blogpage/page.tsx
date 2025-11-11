@@ -3,6 +3,7 @@ import CategoryNav from "@/app/components/CategoryNav";
 import Footer from "@/app/components/Footer";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const BlogPage = () => {
   const posts = [
@@ -61,7 +62,7 @@ const BlogPage = () => {
             >
               {/*  Image */}
               <div className="overflow-hidden">
-                <img
+                <Image
                   src={post.image}
                   alt={post.title}
                   className="w-full h-56 object-cover transform group-hover:scale-110 transition-transform duration-500"

@@ -19,13 +19,32 @@ import { useCart } from "@/app/CartContext/page";
 import { toast } from "sonner";
 import { getProductById } from "@/app/data/products";
 import { useWishlist } from "@/app/wishlistcontext/page";
+import Image from "next/image";
+import { useState } from "react";
+import { useEffect } from "react";
+interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+}
 
 const ProductDetailPage = () => {
-  const { id } = useParams(); // ✅ keep only once
+  const { id } = useParams();
   const router = useRouter();
-  const { addToCart } = useCart();
+  const { addToCart, cartItems } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+
+  const [isInCart, setIsInCart] = useState(false);
+
   const product = getProductById(Number(id));
+  useEffect(() => {
+    if (!product) return;
+    const found = cartItems?.some((item: CartItem) => item.id === product.id);
+    setIsInCart(found);
+  }, [cartItems, product]);
+  
+  // If product is not found
   if (!product) {
     return (
       <div className="min-h-screen bg-background">
@@ -45,6 +64,13 @@ const ProductDetailPage = () => {
     );
   }
 
+  // ✅ Track if product is in cart
+
+  const handleGoToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push("/cartpage");
+  };
+
   const handleAddToCart = () => {
     addToCart({
       id: product.id,
@@ -53,12 +79,13 @@ const ProductDetailPage = () => {
       image: product.image,
     });
     toast.success("Added to cart", {
-      description: `${product?.name} has been added to your cart.`,
+      description: `${product.name} has been added to your cart.`,
     });
   };
 
   const isLiked = isInWishlist(product.id);
-  const handleToggleWishlist = (e: React.MouseEvent) => {
+
+  const handleToggleWishlist = () => {
     if (isLiked) {
       removeFromWishlist(product.id);
       toast.success("Removed from wishlist", {
@@ -77,6 +104,7 @@ const ProductDetailPage = () => {
       });
     }
   };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -94,11 +122,13 @@ const ProductDetailPage = () => {
 
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           {/* Product Image */}
-          <div className="flex items-center justify-center w-full max-w-md mx-auto  rounded-lg overflow-hidden ">
-            <img
+          <div className="flex items-center justify-center w-full max-w-md mx-auto rounded-lg overflow-hidden">
+            <Image
               src={product.image}
               alt={product.name}
-              className="w-full h-full max-h-[500px] object-fit rounded-lg"
+              width={800}
+              height={800}
+              className="w-full h-full max-h-[600px] object-fit rounded-lg"
             />
           </div>
 
@@ -146,15 +176,28 @@ const ProductDetailPage = () => {
               {product.description}
             </p>
 
+            {/* ✅ Conditional Button */}
             <div className="flex gap-3 mb-8">
-              <Button
-                size="lg"
-                className="flex-1  bg-[#08A0AA] text-white hover:bg-[#20A9B2] cursor-pointer"
-                onClick={handleAddToCart}
-              >
-                <ShoppingCart className="w-5 h-5 mr-2 " />
-                Add to Cart
-              </Button>
+              {isInCart ? (
+                <Button
+                  size="lg"
+                  className="flex-1 bg-[#FF6E42] text-white hover:bg-[#ff814f] cursor-pointer"
+                  onClick={handleGoToCart}
+                >
+                  <ShoppingCart className="w-5 h-5 mr-2" />
+                  Go to Cart
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  className="flex-1 bg-[#08A0AA] text-white hover:bg-[#20A9B2] cursor-pointer"
+                  onClick={handleAddToCart}
+                >
+                  <ShoppingCart className="w-5 h-5 mr-2" />
+                  Add to Cart
+                </Button>
+              )}
+
               <Button
                 size="lg"
                 variant="outline"
@@ -173,7 +216,7 @@ const ProductDetailPage = () => {
               <div className="flex items-center gap-3 text-sm">
                 <Truck className="w-5 h-5 text-[#FF6E42]" />
                 <span className="text-muted-foreground">
-                  Free shipping on orders over $50
+                  Free shipping on orders over ₹50
                 </span>
               </div>
               <div className="flex items-center gap-3 text-sm">

@@ -39,7 +39,7 @@ const SearchPage = () => {
         <h1 className="text-4xl font-bold mb-2">Search Results</h1>
         {query ? (
           <p className="text-muted-foreground mb-8">
-            Found {searchResults.length} results for "{query}"
+            Found {searchResults.length} results for &quot;{query}&quot;
           </p>
         ) : (
           <p className="text-muted-foreground mb-8">
@@ -50,7 +50,7 @@ const SearchPage = () => {
         {isLoading ? (
           <div>Loading...</div>
         ) : searchResults.length === 0 ? (
-          <div>No results found for "{query}"</div>
+          <div>No results found for &quot;{query}&quot;</div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             {searchResults.map((product) => (

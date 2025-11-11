@@ -4639,5 +4639,5 @@ export const allProducts: Product[] = [
  
 ];
 
-export const getProductById = (id: Number) =>
+export const getProductById = (id: number) =>
   allProducts.find((p) => p.id === id);

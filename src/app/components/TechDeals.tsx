@@ -5,6 +5,7 @@ import { Button } from "@/app/components/ui/button";
 import { Smartphone, Tablet, Laptop } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { allProducts } from "@/app/data/products";
+import Image from "next/image";
 
 const TechDeals = () => {
   const router = useRouter();
@@ -46,9 +47,11 @@ const TechDeals = () => {
                
               >
                 <div className="relative overflow-hidden">
-                  <img
+                  <Image
                     src={deal.image}
                     alt={deal.name}
+                    width={700}
+                    height={700}
                     className={`w-full object-cover group-hover:scale-110 transition-transform duration-300 cursor-pointer ${
                       deal.id === 7 ? "h-full" : "h-40"
                     }`}

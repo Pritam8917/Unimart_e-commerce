@@ -3,6 +3,7 @@ import { Card } from "@/app/components/ui/card";
 import { Badge } from "@/app/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { allProducts } from "../data/products";
+import Image from "next/image";
 
 const newArrivals = allProducts.filter((p) => p.id >= 1 && p.id <= 12);
 
@@ -33,9 +34,11 @@ const NewArrivals = () => {
               onClick={() => router.push(`/productdetails/${product.id}`)}
             >
               <div className="relative h-full overflow-hidden ">
-                <img
+                <Image
                   src={product.image}
                   alt={product.name}
+                  width={800}
+                  height={800}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer"
                 />
                 <Badge className="absolute top-2 left-2 bg-[#FF6E42] text-white text-xs hover:bg-[#2DA2A4] transition-colors">

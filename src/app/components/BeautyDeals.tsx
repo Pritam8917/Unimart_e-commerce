@@ -4,6 +4,7 @@ import { Badge } from "@/app/components/ui/badge";
 import { Star } from "lucide-react";
 import { allProducts } from "../data/products";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const beautyProducts = allProducts.filter(p => p.id >= 201 && p.id <= 212);
 
@@ -21,9 +22,10 @@ const BeautyDeals = () => {
           {beautyProducts.map((product) => (
             <Card key={product.id} className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <div className="relative aspect-square overflow-hidden bg-muted">
-                <img
+                <Image
                   src={product.image}
                   alt={product.name}
+                  fill
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer "
                   onClick={() => router.push(`/productdetails/${product.id}`)} 
                 />

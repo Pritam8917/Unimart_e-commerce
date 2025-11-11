@@ -71,12 +71,18 @@ const CheckoutPage = () => {
       toast.success(res.data.message);
       clearCart();
       router.push("/profilepage");
-    } catch (error: any) {
-      toast.error("Failed to place order , please try again");
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
+   } catch (error: unknown) {
+  if (error instanceof Error) {
+    console.error("Order placement failed:", error.message);
+  } else {
+    console.error("Unknown error during order placement:", error);
+  }
+
+  toast.error("Failed to place order, please try again");
+} finally {
+  setIsLoading(false);
+}
+
   };
 
   return (

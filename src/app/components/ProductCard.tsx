@@ -6,6 +6,8 @@ import { useCart } from "@/app/CartContext/page";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useWishlist } from "@/app/wishlistcontext/page";
+import Image from "next/image";
+import { useState, useEffect } from "react";
 
 interface ProductCardProps {
   id?: number;
@@ -14,6 +16,12 @@ interface ProductCardProps {
   originalPrice?: number;
   image: string;
   rating: number;
+}
+interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
 }
 
 const ProductCard = ({
@@ -24,13 +32,22 @@ const ProductCard = ({
   image,
   rating,
 }: ProductCardProps) => {
-
-  const { addToCart } = useCart();
+  const { addToCart, cartItems } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const router = useRouter();
   const productId = id || Date.now();
   const isLiked = isInWishlist(productId);
-  
+  const [isInCart, setIsInCart] = useState(false);
+
+  useEffect(() => {
+    const found = cartItems?.some((item: CartItem) => item.id === productId);
+    setIsInCart(found);
+  }, [cartItems, productId]);
+
+  const handleGoToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push("/cartpage");
+  };
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     addToCart({
@@ -43,6 +60,7 @@ const ProductCard = ({
       description: `${name} has been added to your cart.`,
     });
   };
+
   const handleToggleWishlist = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (isLiked) {
@@ -70,13 +88,12 @@ const ProductCard = ({
   };
 
   return (
-    <Card
-      className="group overflow-hidden transition-all duration-300 hover:shadow-(--card-shadow-hover) border border-border"
-    >
+    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-(--card-shadow-hover) border border-border">
       <div className="relative overflow-hidden aspect-square bg-muted">
-        <img
+        <Image
           src={image}
           alt={name}
+          fill
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer"
           onClick={handleCardClick}
         />
@@ -84,9 +101,11 @@ const ProductCard = ({
           size="icon"
           variant="ghost"
           className="absolute top-2 right-2 bg-[#2DA2A4] hover:bg-[#32bac4] text-white hover:text-white transition-all duration-300 opacity-0 group-hover:opacity-100 cursor-pointer"
-           onClick={handleToggleWishlist}
+          onClick={handleToggleWishlist}
         >
-          <Heart className={`w-4 h-4 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
+          <Heart
+            className={`w-4 h-4 ${isLiked ? "fill-red-500 text-red-500" : ""}`}
+          />
         </Button>
       </div>
 
@@ -120,13 +139,23 @@ const ProductCard = ({
       </CardContent>
 
       <CardFooter className="p-4 pt-0">
-        <Button
-          className="w-full bg-[#2DA2A4] hover:bg-[#32bac4] text-white cursor-pointer"
-          onClick={handleAddToCart}
-        >
-          <ShoppingCart className="w-4 h-4 mr-2" />
-          Add to Cart
-        </Button>
+        {isInCart ? (
+          <Button
+            className="w-full bg-[#FF6E42] hover:bg-[#ff814f] text-white cursor-pointer"
+            onClick={handleGoToCart}
+          >
+            <ShoppingCart className="w-4 h-4 mr-2" />
+            Go to Cart
+          </Button>
+        ) : (
+          <Button
+            className="w-full bg-[#2DA2A4] hover:bg-[#32bac4] text-white cursor-pointer"
+            onClick={handleAddToCart}
+          >
+            <ShoppingCart className="w-4 h-4 mr-2" />
+            Add to Cart
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

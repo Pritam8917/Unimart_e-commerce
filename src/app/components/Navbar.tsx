@@ -7,12 +7,10 @@ import { Input } from "@/app/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/app/CartContext/page";
 import { useWishlist } from "@/app/wishlistcontext/page";
-import { useSession } from "next-auth/react"; // ✅ added
 import Image from "next/image";
 
 const Navbar = () => {
   const router = useRouter();
-  const { data: session, status } = useSession(); // ✅ get user session
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,8 +19,6 @@ const Navbar = () => {
     e.preventDefault();
     router.push(`/searchpage?q=${encodeURIComponent(searchQuery)}`);
   };
-
-  const isLoggedIn = status === "authenticated"; // ✅ check login status
 
   return (
     <nav className="sticky top-0 z-50 bg-background border-b border-border shadow-sm px-4 sm:px-6 md:px-10 lg:px-13">
@@ -64,7 +60,7 @@ const Navbar = () => {
                 type="text"
                 placeholder="Search for products, brands and more"
                 value={searchQuery}
-                onChange={(e: any) => setSearchQuery(e.target.value)}
+                onChange={(e:  React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                 className="w-full pr-10 border-input text-sm sm:text-base"
               />
               <Button

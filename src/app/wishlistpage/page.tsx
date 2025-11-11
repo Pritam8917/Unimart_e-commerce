@@ -9,6 +9,15 @@ import { useWishlist } from "@/app/wishlistcontext/page";
 import { useCart } from "@/app/CartContext/page";
 import { toast } from "sonner";
 import CategoryNav from "@/app/components/CategoryNav";
+import Image from "next/image";
+
+type WishlistItem = {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  rating: number;
+};
 
 const WishlistPage = () => {
   const { wishlistItems, removeFromWishlist } = useWishlist();
@@ -21,7 +30,7 @@ const WishlistPage = () => {
     });
   };
 
-  const handleAddToCart = (item: (typeof wishlistItems)[0]) => {
+  const handleAddToCart = (item: WishlistItem) => {
     addToCart({
       id: item.id,
       name: item.name,
@@ -62,16 +71,17 @@ const WishlistPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {wishlistItems.map((item :any) => (
+            {wishlistItems.map((item :WishlistItem) => (
               <Card
                 key={item.id}
                 className="group overflow-hidden transition-all duration-300 hover:shadow-lg "
               >
                 <Link href={`/productdetails/${item.id}`}>
                   <div className="relative overflow-hidden aspect-square bg-muted">
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.name}
+                      fill
                       className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                     />
                   </div>

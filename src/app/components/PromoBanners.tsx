@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/app/components/ui/button";
+import Image from "next/image";
 
 const PromoBanners = () => {
   return (
@@ -9,7 +10,7 @@ const PromoBanners = () => {
           {/* Large Banner 1 - Full Width on Mobile */}
           <Link href="/CategoryPage/electronics" className="lg:col-span-2 group">
             <div className="relative h-[350px] rounded-2xl overflow-hidden bg-primary">
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&auto=format&fit=crop"
                   width={1200}
                   height={350}
@@ -31,9 +32,10 @@ const PromoBanners = () => {
           {/* Small Banner 1 */}
           <Link href="/CategoryPage/fashion" className="group">
             <div className="relative h-[350px] rounded-2xl overflow-hidden bg-accent">
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=800&auto=format&fit=crop"
                 alt="Fashion Sale"
+                fill
                 className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
@@ -52,9 +54,10 @@ const PromoBanners = () => {
           {/* Medium Banner 1 */}
           <Link href="/productspage/home" className="group">
             <div className="relative h-[280px] rounded-2xl overflow-hidden bg-muted">
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=800&auto=format&fit=crop"
                 alt="Home Decor"
+                fill
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-linear-to-r from-black/60 to-black/20" />
@@ -72,9 +75,10 @@ const PromoBanners = () => {
           {/* Medium Banner 2 */}
           <Link href="/CategoryPage/beauty" className="group">
             <div className="relative h-[280px] rounded-2xl overflow-hidden bg-secondary">
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&auto=format&fit=crop"
                 alt="Beauty Products"
+                fill
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-linear-to-l from-black/60 to-black/20" />

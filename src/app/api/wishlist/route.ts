@@ -4,9 +4,18 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connect } from "@/db/dbConfig";
 import Wishlist from "@/models/wishlist.models";
 
-connect();
+await connect(); // ✅ ensure DB connected before route logic
 
-// GET - get user's wishlist
+// ✅ Define an interface for wishlist items
+interface WishlistItem {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  [key: string]: unknown; // for any extra optional fields
+}
+
+// ✅ GET - get user's wishlist
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email)
@@ -16,19 +25,21 @@ export async function GET() {
   return NextResponse.json(wishlist || { items: [] });
 }
 
-// POST - add item to wishlist
+// ✅ POST - add item to wishlist
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = await req.json();
+  const body: WishlistItem = await req.json();
   let wishlist = await Wishlist.findOne({ userId: session.user.email });
 
   if (!wishlist) {
     wishlist = new Wishlist({ userId: session.user.email, items: [body] });
   } else {
-    const exists = wishlist.items.some((i:any) => i.id === body.id);
+    const exists = wishlist.items.some(
+      (i: WishlistItem) => i.id === body.id
+    );
     if (!exists) wishlist.items.push(body);
   }
 
@@ -36,19 +47,21 @@ export async function POST(req: Request) {
   return NextResponse.json(wishlist);
 }
 
-// DELETE - remove item
+// ✅ DELETE - remove item
 export async function DELETE(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { id } = await req.json();
+  const { id }: { id: string } = await req.json();
   const wishlist = await Wishlist.findOne({ userId: session.user.email });
-  
+
   if (!wishlist)
     return NextResponse.json({ error: "Wishlist not found" }, { status: 404 });
 
-  wishlist.items = wishlist.items.filter((i:any) => i.id !== id);
+  wishlist.items = wishlist.items.filter(
+    (i: WishlistItem) => i.id !== id
+  );
   await wishlist.save();
 
   return NextResponse.json(wishlist);

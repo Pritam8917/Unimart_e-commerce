@@ -11,6 +11,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 const Hero = () => {
   const [activeFeature, setActiveFeature] = useState(0);
@@ -68,7 +69,7 @@ const Hero = () => {
       setActiveFeature((prev) => (prev + 1) % features.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  });
 
   return (
     <section
@@ -199,14 +200,15 @@ const Hero = () => {
             {/* Main Featured Image */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px]">
               <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl transform rotate-6 hover:rotate-0 transition-transform duration-500">
-                <img
+                <Image
                   src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=800&fit=crop"
                   alt="Featured Collection"
                   className="w-full h-full object-cover"
+                  fill
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
-                  <Badge className="mb-2 bg-primary text-primary-foreground">
+                  <Badge className="mb-2  bg-[#20A9B2] hover:bg-[#08A0AA] hover:text-white ">
                     Summer Collection
                   </Badge>
                   <h3 className="text-2xl font-bold text-white">
@@ -233,17 +235,19 @@ const Hero = () => {
                     {product.badge}
                   </Badge>
                   <div className="aspect-square rounded-lg overflow-hidden mb-2">
-                    <img
+                    <Image
                       src={product.image}
                       alt={product.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      width={700}
+                      height={700}
                     />
                   </div>
                   <h4 className="text-xs font-semibold mb-1 line-clamp-1">
                     {product.title}
                   </h4>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold text-primary">
+                    <span className="text-sm font-bold   text-[#08A0AA] ">
                       {product.price}
                     </span>
                   </div>

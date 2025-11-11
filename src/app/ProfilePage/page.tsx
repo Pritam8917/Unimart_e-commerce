@@ -24,9 +24,32 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/app/components/ui/dialog";
-import { toast
 
- } from "sonner";
+interface OrderItem {
+  name: string;
+  quantity: number;
+  price: number;
+}
+
+interface Order {
+  _id: string;
+  date: string;
+  status: string;
+  total: number;
+  taxAmount: number;
+  shippingCost: number;
+  shippingAddress: {
+    address: string;
+    city: string;
+    state: string;
+    phone: string;
+    cardName: string;
+    cardNumber: number;
+   cardExpiryDate: string;
+  };
+  items: OrderItem[];
+}
+
 const ProfilePage = () => {
   const { data: session } = useSession();
   const user = session?.user;
@@ -46,39 +69,10 @@ const ProfilePage = () => {
 
   // 2️⃣ Orders
 
-  const [orders, setOrders] = useState<any[]>([]);
-  const [selectedOrder, setSelectedOrder] = useState<any>(null);
-  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
-  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
-  const [editingAddress, setEditingAddress] = useState<any>(null);
-  const [editingPayment, setEditingPayment] = useState<any>(null);
-  // save profile
-  const handleSaveProfile = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    toast.success("Profile updated successfully!");
-  };
+ const [orders, setOrders] = useState<Order[]>([]);
+const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
- // edit address
-  const handleAddAddress = () => {
-    setEditingAddress(null);
-    setIsAddressDialogOpen(true);
-  };
-  const handleEditAddress = (address: any) => {
-    setEditingAddress(address);
-    setIsAddressDialogOpen(true);
-  };
 
-  // edit payments
-   const handleAddPayment = () => {
-    setEditingPayment(null);
-    setIsPaymentDialogOpen(true);
-  };
-
-  const handleEditPayment = (payment: any) => {
-    setEditingPayment(payment);
-    setIsPaymentDialogOpen(true);
-  };
-  
   useEffect(() => {
     const fetchUserAndOrders = async () => {
       try {
@@ -98,8 +92,12 @@ const ProfilePage = () => {
             phone: phoneFromOrder || "",
           });
         }
-      } catch (error: any) {
-        console.error("Error fetching orders:", error.message);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error("Error fetching orders:", error.message);
+        } else {
+          console.error("Unknown error fetching orders:", error);
+        }
       }
     };
 
@@ -221,11 +219,11 @@ const ProfilePage = () => {
                   <p className="text-muted-foreground">No orders found.</p>
                 ) : (
                   orders.map((order) => (
-                    <Card key={order._id || order.id} className="p-4">
+                    <Card key={order._id} className="p-4">
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="font-semibold">
-                            Order {order.productId}
+                            Order
                           </p>
                           <p className="text-sm text-muted-foreground">
                             {order.date}
@@ -316,7 +314,7 @@ const ProfilePage = () => {
             <Card className="p-6">
               <h2 className="text-2xl font-bold mb-6">Payment Methods</h2>
               <div className="space-y-4">
-                {orders.length> 0 ? (
+                {orders.length > 0 ? (
                   <Card className="p-4">
                     <div className="flex justify-between items-center">
                       <div>
@@ -345,7 +343,7 @@ const ProfilePage = () => {
                       </div> */}
                     </div>
                   </Card>
-                ):(
+                ) : (
                   <p className="text-sm text-muted-foreground">
                     No saved payments found.
                   </p>
@@ -370,7 +368,7 @@ const ProfilePage = () => {
         <DialogContent className="max-w-5xl p-6">
           <DialogHeader>
             <DialogTitle>
-              Order Details - {selectedOrder?.id || selectedOrder?._id}
+              Order Details - {selectedOrder?._id}
             </DialogTitle>
           </DialogHeader>
 
@@ -390,7 +388,7 @@ const ProfilePage = () => {
               <div>
                 <h3 className="font-semibold mb-3">Products</h3>
                 <div className="space-y-2">
-                  {selectedOrder.items?.map((product: any, index: number) => (
+                  {selectedOrder.items?.map((product: OrderItem, index: number) => (
                     <div
                       key={`${product.name}-${index}`}
                       className="flex justify-between items-center p-3 bg-muted rounded-lg"

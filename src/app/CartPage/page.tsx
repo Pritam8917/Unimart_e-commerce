@@ -9,6 +9,7 @@ import { Card } from "@/app/components/ui/card";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useCart } from "@/app/CartContext/page";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const CartPage = () => {
   const { cartItems, updateQuantity, removeFromCart } = useCart();
@@ -52,9 +53,11 @@ const CartPage = () => {
               {cartItems.map((item) => (
                 <Card key={item.id} className="p-4">
                   <div className="flex gap-4">
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.name}
+                      height={600}
+                      width={600}
                       className="w-24 h-24 object-cover rounded-lg cursor-pointer"
                       onClick={() => handleCardClick(item.id)}
                     />

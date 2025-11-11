@@ -5,6 +5,7 @@ import { Badge } from "@/app/components/ui/badge";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { allProducts } from "../data/products";
+import Image from "next/image";
 
 const gadgets = allProducts.filter((p) => p.id >= 401 && p.id <= 412);
 
@@ -48,9 +49,10 @@ const GadgetsSection = () => {
                   gadget.id === 2 ? "aspect-video" : "aspect-square"
                 }`}
               >
-                <img
+                <Image
                   src={gadget.image}
                   alt={gadget.name}
+                  fill
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer"
                    onClick={() => router.push(`/productdetails/${gadget.id}`)}
                 />

@@ -17,7 +17,7 @@ interface ShippingAddress {
   country: string;
   phone: string;
   cardName: string;
-  cardNumber: Number;
+  cardNumber: number;
  cardExpiryDate: string;
 }
 

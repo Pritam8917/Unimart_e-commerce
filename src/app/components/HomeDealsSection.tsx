@@ -5,6 +5,7 @@ import { Button } from "@/app/components/ui/button";
 import { Badge } from "@/app/components/ui/badge";
 import { allProducts } from "../data/products";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const homeDeals = allProducts.filter((p) => p.id >= 101 && p.id <= 112);
 
@@ -46,9 +47,10 @@ const HomeDealsSection = () => {
                   deal.id === 101 ? "aspect-video" : "aspect-square"
                 }`}
               >
-                <img
+                <Image
                   src={deal.image}
                   alt={deal.name}
+                  fill
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer"
                     onClick={() => {
                   router.push(`/productdetails/${deal.id}`);

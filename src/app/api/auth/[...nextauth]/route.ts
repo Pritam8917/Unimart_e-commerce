@@ -1,9 +1,16 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import bcrypt from "bcrypt";
 import { connect } from "@/db/dbConfig";
 import User from "@/models/user.models";
-import bcrypt from "bcrypt";
-import GoogleProvider from "next-auth/providers/google";
+import NextAuth from "next-auth";
+interface SafeUser {
+  id: string;
+  email: string;
+  name: string;
+  username?: string;
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -11,54 +18,45 @@ export const authOptions: NextAuthOptions = {
       name: "Credentials",
       id: "credentials",
       credentials: {
-        email: {
-          label: "Email",
-          type: "text",
-          placeholder: "jsmith@example.com",
-        },
+        email: { label: "Email", type: "text", placeholder: "jsmith@example.com" },
         password: { label: "Password", type: "password" },
       },
 
-      async authorize(credentials) {
+      async authorize(credentials): Promise<SafeUser | null> {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required");
         }
 
         try {
           await connect();
-
           const user = await User.findOne({ email: credentials.email });
-          if (!user) {
-            throw new Error("user not found");
-          }
+
+          if (!user) throw new Error("User not found");
 
           if (user.provider === "google") {
-            throw new Error(
-              "This email is registered with Google. Please sign in using Google"
-            );
+            throw new Error("This email is registered with Google. Please sign in using Google");
           }
 
-          const isValid = await bcrypt.compare(
-            credentials.password,
-            user.password
-          );
-          if (!isValid) {
-            throw new Error("Invalid password");
-          }
+          const isValid = await bcrypt.compare(credentials.password, user.password);
+          if (!isValid) throw new Error("Invalid password");
 
-          //  Return safe user object (no password) for saving in jwt & session
           return {
             id: user._id.toString(),
-            username: user.username,
             email: user.email,
             name: user.username,
+            username: user.username,
           };
-        } catch (err: any) {
-          console.error("❌ Authorization error:", err);
-          throw new Error(err.message || "Authorization failed");
+        } catch (err) {
+          if (err instanceof Error) {
+            console.error("❌ Authorization error:", err.message);
+            throw new Error(err.message);
+          }
+          console.error("❌ Unknown authorization error:", err);
+          throw new Error("Authorization failed");
         }
       },
     }),
+
     GoogleProvider({
       id: "google",
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -67,14 +65,11 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-
-    //save login data in database through google provider
     async signIn({ user, account }) {
       await connect();
 
-      if (account?.provider === "google") {
+      if (account?.provider === "google" && user.email) {
         const existingUser = await User.findOne({ email: user.email });
-
         if (!existingUser) {
           await User.create({
             username: user.name,
@@ -83,45 +78,40 @@ export const authOptions: NextAuthOptions = {
           });
         }
       }
-
       return true;
     },
-    
+
     async jwt({ token, user }) {
-      // when user first logs in (authorize() returns user)
       if (user) {
-        token.id = user.id;
-        token.email = user.email;
-        token.name = (user as any).name || (user as any).username || "";
+        const safeUser = user as SafeUser;
+        token.id = safeUser.id;
+        token.email = safeUser.email;
+        token.name = safeUser.name || safeUser.username || "";
       }
       return token;
     },
 
     async session({ session, token }) {
       if (session.user) {
-        (session.user as any).id = token.id;
-        (session.user as any).email = token.email;
-        (session.user as any).name = token.name;
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
       }
       return session;
     },
   },
 
-  //  Custom pages (update path to your actual login page)
   pages: {
-    signIn: "/auth/LoginPage", // matches your folder structure
+    signIn: "/auth/LoginPage",
   },
 
-  //  Session configuration
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
 
-  //  Required for security
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-//  Export for Next.js route handling
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
