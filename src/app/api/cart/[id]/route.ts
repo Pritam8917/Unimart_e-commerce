@@ -13,21 +13,27 @@ type CartItem = {
   quantity: number;
 };
 
+// Helper to get dynamic route id
+function getIdFromUrl(req: Request) {
+  const url = new URL(req.url);
+  const parts = url.pathname.split("/").filter(Boolean);
+  return parts[parts.length - 1]; // last segment = id
+}
+
 // DELETE handler — remove item from cart
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: Request) {
   await connect();
-  const id = Number(params.id);
+  const id = Number(getIdFromUrl(req));
   const session = await getServerSession(authOptions);
 
-  const cart = await Cart.findOne({ userId: session?.user?.email });
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const cart = await Cart.findOne({ userId: session.user.email });
 
   if (cart) {
-    cart.items = cart.items.filter(
-      (item: CartItem) => item.id !== id
-    );
+    cart.items = cart.items.filter((item: CartItem) => item.id !== id);
     await cart.save();
   }
 
@@ -35,16 +41,18 @@ export async function DELETE(
 }
 
 // PUT handler — update item quantity
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(req: Request) {
   await connect();
-  const id = Number(params.id);
+  const id = Number(getIdFromUrl(req));
   const session = await getServerSession(authOptions);
+
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { delta }: { delta: number } = await req.json();
 
-  const cart = await Cart.findOne({ userId: session?.user?.email });
+  const cart = await Cart.findOne({ userId: session.user.email });
 
   if (cart) {
     const item = cart.items.find((i: CartItem) => i.id === id);
