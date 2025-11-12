@@ -8,7 +8,7 @@ import ProductCard from "@/app/components/ProductCard";
 import { allProducts } from "@/app/data/products"; // Add this import
 import { useState, useEffect } from "react";
 
-const SearchPage = () => {
+const searchPage = () => {
   const searchParams = useSearchParams();
   const query = searchParams.get("q")?.toLowerCase() || "";
 
@@ -65,4 +65,4 @@ const SearchPage = () => {
   );
 };
 
-export default SearchPage;
+export default searchPage;
