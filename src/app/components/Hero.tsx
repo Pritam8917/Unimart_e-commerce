@@ -257,7 +257,7 @@ const Hero = () => {
 
             {/* Floating Action Button */}
             <div className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-4">
-              <Link href="/cartpage">
+              <Link href="/CartPage">
                 <Button
                   size="icon"
                   className="h-16 w-16 rounded-full shadow-2xl hover:scale-110 transition-transform animate-in zoom-in duration-500 delay-1000  text-white bg-[#20A9B2] hover:bg-[#08A0AA] hover:text-white cursor-pointer"

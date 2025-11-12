@@ -77,7 +77,7 @@ const Navbar = () => {
           {/* Right Side */}
           <div className="flex items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 min-w-fit">
             {/* Profile */}
-            <Link href="/profilepage" className="flex flex-col items-center">
+            <Link href="/ProfilePage" className="flex flex-col items-center">
               <Button
                 variant="ghost"
                 size="icon"
@@ -110,7 +110,7 @@ const Navbar = () => {
 
             {/* Cart */}
             <Link
-              href="/cartpage"
+              href="/CartPage"
               className="flex flex-col items-center relative"
             >
               <Button

@@ -20,5 +20,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/wishlistpage", "/cartpage", "/profilepage", "/checkoutpage"],
+  matcher: ["/wishlistpage", "/CartPage", "/ProfilePage", "/checkoutpage"],
 };
