@@ -192,7 +192,7 @@ const LoginPage = () => {
                     variant="outline"
                     className="w-full mt-2 flex items-center justify-center gap-2 border-gray-300 hover:bg-gray-100 cursor-pointer"
                     onClick={() =>
-                      signIn("google", { callbackUrl: "/profilepage" })
+                      signIn("google", { callbackUrl: "/ProfilePage" })
                     }
                   >
                     <Image
