@@ -64,11 +64,11 @@ const ProductDetailPage = () => {
     );
   }
 
-  // ✅ Track if product is in cart
+  //  Track if product is in cart
 
   const handleGoToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    router.push("/cartpage");
+    router.push("/CartPage");
   };
 
   const handleAddToCart = () => {

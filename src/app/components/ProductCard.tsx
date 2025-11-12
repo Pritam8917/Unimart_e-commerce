@@ -46,7 +46,7 @@ const ProductCard = ({
 
   const handleGoToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    router.push("/cartpage");
+    router.push("/CartPage");
   };
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
