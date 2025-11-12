@@ -17,7 +17,7 @@ const Navbar = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push(`/searchpage?q=${encodeURIComponent(searchQuery)}`);
+    router.push(`/SearchPage?q=${encodeURIComponent(searchQuery)}`);
   };
 
   return (
