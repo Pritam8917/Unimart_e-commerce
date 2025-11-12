@@ -70,7 +70,7 @@ const CheckoutPage = () => {
       console.log("order placed successfully");
       toast.success(res.data.message);
       clearCart();
-      router.push("/profilepage");
+      router.push("/ProfilePage");
    } catch (error: unknown) {
   if (error instanceof Error) {
     console.error("Order placement failed:", error.message);
