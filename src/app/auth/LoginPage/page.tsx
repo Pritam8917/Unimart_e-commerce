@@ -61,31 +61,44 @@ const LoginPage = () => {
 
   // 🔐 Login (Credentials)
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  setIsLoading(true);
+    e.preventDefault();
+    setIsLoading(true);
 
-  try {
-    const res = await signIn("credentials", {
-      redirect: false,
-      email: loginData.email,
-      password: loginData.password,
-    });
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email: loginData.email,
+        password: loginData.password,
+      });
 
-    if (res?.error) {
-      // CredentialsSignin covers all invalid login cases
-      toast.error("Invalid email or password");
-    } else if (res?.ok) {
-      toast.success("Login successful!");
-      router.push("/ProfilePage"); // or "/"
+      if (res?.error) {
+        switch (res.error) {
+          case "Invalid password":
+            toast.error("Incorrect password. Please try again.");
+            break;
+          case "User not found":
+            toast.error("User not found. Please sign up first.");
+            setActiveTab("signup");
+            break;
+          case "This email is registered with Google. Please sign in using Google":
+            toast.error(
+              "This email is registered with Google. Please sign in using Google"
+            );
+            break;
+          default:
+            toast.error("Login failed. Please try again.");
+        }
+      } else {
+        toast.success("Login successful!");
+        router.push("/");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong!");
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error("Login error:", error);
-    toast.error("Something went wrong!");
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+  };
 
   // 🧾 Signup
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
