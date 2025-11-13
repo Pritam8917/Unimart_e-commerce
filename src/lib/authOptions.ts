@@ -4,7 +4,6 @@ import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcrypt";
 import { connect } from "@/db/dbConfig";
 import User from "@/models/user.models";
-import NextAuth from "next-auth";
 interface SafeUser {
   id: string;
   email: string;
