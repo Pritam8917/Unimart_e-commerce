@@ -23,8 +23,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  
- axios.defaults.withCredentials = true;
+
   // Load from DB on mount
   useEffect(() => {
     axios.get("/api/cart").then((res) => {

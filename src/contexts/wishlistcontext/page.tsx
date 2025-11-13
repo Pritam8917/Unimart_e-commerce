@@ -24,8 +24,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
-  
-  axios.defaults.withCredentials = true;
+
   // Fetch wishlist from MongoDB
   useEffect(() => {
     axios
