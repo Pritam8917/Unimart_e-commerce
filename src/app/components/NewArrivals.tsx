@@ -49,7 +49,7 @@ const NewArrivals = () => {
                     {product.name}
                   </h3>
                   <p className="text-base font-bold text-[#2DA2A4]">
-                    ${product.price}
+                    ₹{product.price}
                   </p>
                 </div>
               </div>

@@ -66,10 +66,10 @@ const HomeDealsSection = () => {
                 </h3>
                 <div className="flex items-center gap-2">
                   <span className="text-base font-bold text-[#08A0AA]">
-                    ${deal.price}
+                    ₹{deal.price}
                   </span>
                   <span className="text-xs text-muted-foreground line-through">
-                    ${deal.originalPrice}
+                    ₹{deal.originalPrice}
                   </span>
                 </div>
               </CardContent>

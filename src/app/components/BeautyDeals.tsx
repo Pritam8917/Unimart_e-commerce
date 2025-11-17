@@ -41,8 +41,8 @@ const BeautyDeals = () => {
                   <span className="text-xs text-muted-foreground">({product.reviews})</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-base font-bold text-[#2DA2A4]">${product.price}</span>
-                  <span className="text-xs text-muted-foreground line-through">${product.originalPrice}</span>
+                  <span className="text-base font-bold text-[#2DA2A4]">₹{product.price}</span>
+                  <span className="text-xs text-muted-foreground line-through">₹{product.originalPrice}</span>
                 </div>
               </CardContent>
             </Card>

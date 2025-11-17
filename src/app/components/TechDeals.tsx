@@ -20,8 +20,8 @@ const TechDeals = () => {
       category: categories[index],
       icon: icons[index],
       name: product.name,
-      price: `$${product.price}`,
-      originalPrice: `$${product.originalPrice}`,
+      price: `₹${product.price}`,
+      originalPrice: `₹${product.originalPrice}`,
       discount: product.discount,
       image: product.image,
     };

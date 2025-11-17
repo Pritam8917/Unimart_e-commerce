@@ -66,10 +66,10 @@ const GadgetsSection = () => {
                 </h3>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-base font-bold text-[#20A9B2]">
-                    ${gadget.price}
+                    ₹{gadget.price}
                   </span>
                   <span className="text-xs  line-through">
-                    ${gadget.originalPrice}
+                    ₹{gadget.originalPrice}
                   </span>
                 </div>
                 <Button

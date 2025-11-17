@@ -70,10 +70,10 @@ const FurnitureDeals = () => {
                     </h3>
                     <div className="flex items-baseline gap-2 mb-3">
                       <span className="text-base font-bold text-[#08A0AA]">
-                        ${item.price}
+                        ₹{item.price}
                       </span>
                       <span className="text-xs text-muted-foreground line-through">
-                        ${item.originalPrice}
+                        ₹{item.originalPrice}
                       </span>
                     </div>
                   </div>
